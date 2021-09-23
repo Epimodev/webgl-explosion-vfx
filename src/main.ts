@@ -36,14 +36,22 @@ const main = () => {
   scene.add(backgroundPlane)
 
   // Setup plane with explosion shader
-  const explosionPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(4, 4),
-    explosionMaterial({}),
-  )
+  const material = explosionMaterial({})
+  const explosionPlane = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), material)
   explosionPlane.translateZ(1)
   scene.add(explosionPlane)
 
-  createPlayground({ scene, camera })
+  const clock = new THREE.Clock()
+  clock.start()
+
+  createPlayground({
+    scene,
+    camera,
+    onTick: () => {
+      const elapsedTime = clock.getElapsedTime()
+      material.uniforms.u_time.value = elapsedTime / 10
+    },
+  })
 }
 
 // Playground implementation
@@ -68,16 +76,14 @@ const createPlayground = ({
 
   // Stats
   const stats = new Stats()
-  stats.showPanel(1)
+  stats.showPanel(0)
   document.body.appendChild(stats.dom)
 
   // Create size object, which is initialized later by `updateSize()`
   const size = { width: 0, height: 0 }
 
   // Renderer
-  const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-  })
+  const renderer = new THREE.WebGLRenderer({ canvas })
   const effectComposer = new EffectComposer(renderer)
   const renderPass = new RenderPass(scene, camera)
   // @ts-expect-error

@@ -12,6 +12,10 @@ export const explosionMaterial =
       fragmentShader: fragment,
       side: THREE.DoubleSide,
       transparent: true,
-      uniforms: {},
+      uniforms: {
+        u_time: {
+          value: 0,
+        },
+      },
     })
   }
