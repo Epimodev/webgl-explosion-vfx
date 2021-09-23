@@ -15,11 +15,16 @@ float remap(float inputMin, float inputMax, float outputMin, float outputMax, fl
   return lerp(outputMin, outputMax, t);
 }
 
-void main() {
-  float circle_gradient = 1.0 - distance(v_uv, vec2(0.5));
-  float circle = invLerp(0.5, 1.0, circle_gradient);
-  vec3 color = vec3(0, 0, 0);
-  float alpha = circle;
+float quadraticCircle(vec2 coordinate) {
+  float centerDistance = distance(coordinate, vec2(0.5));
+  float quadraticDistance = pow(centerDistance, 2.0);
+  return 1.0 - quadraticDistance;
+}
 
-  gl_FragColor = vec4(color, alpha);
+void main() {
+  float circle = quadraticCircle(v_uv);
+  circle = invLerp(0.8, 1.0, circle);
+  vec3 color = vec3(circle);
+
+  gl_FragColor = vec4(color, 1.0);
 }
