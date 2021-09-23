@@ -1,6 +1,9 @@
 import Stats from "stats.js"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
+import { SSAARenderPass } from "three/examples/jsm/postprocessing/SSAARenderPass"
 import { uvGridMaterial } from "./shaders/uvGrid"
 import "./style.css"
 
@@ -67,8 +70,13 @@ const createPlayground = ({
   // Renderer
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
-    antialias: true,
   })
+  const effectComposer = new EffectComposer(renderer)
+  const renderPass = new RenderPass(scene, camera)
+  // @ts-expect-error
+  const antialiasingPass = new SSAARenderPass(scene, camera)
+  effectComposer.addPass(renderPass)
+  effectComposer.addPass(antialiasingPass)
 
   // Controls
   const controls = new OrbitControls(camera, canvas)
@@ -83,12 +91,17 @@ const createPlayground = ({
     size.width = window.innerWidth
     size.height = window.innerHeight
 
+    // Set pixel ratio to 2 maximum
+    const pixelRatio = Math.min(devicePixelRatio, MAX_PIXEL_RATIO)
+
     // Update camera
     camera.aspect = size.width / size.height
     camera.updateProjectionMatrix()
+    // Update renderer and effect composer size and pixel ratio
     renderer.setSize(size.width, size.height)
-    // Set pixel ratio to 2 maximum
-    renderer.setPixelRatio(Math.min(devicePixelRatio, MAX_PIXEL_RATIO))
+    renderer.setPixelRatio(pixelRatio)
+    effectComposer.setSize(size.width, size.height)
+    effectComposer.setPixelRatio(pixelRatio)
 
     // Create a new instance because `size` object is changed on resize
     onResize?.({ width: size.width, height: size.height })
@@ -107,7 +120,7 @@ const createPlayground = ({
     controls.update()
 
     // Render
-    renderer.render(scene, camera)
+    effectComposer.render()
 
     stats.end()
     // Call tick again on the next frame
