@@ -6,8 +6,6 @@ uniform vec3 u_color2;
 
 varying vec2 v_uv;
 
-const float smoothness = 0.01;
-
 void main() {
   float rows_shades = floor(fract(v_uv.y) * u_scale) / u_scale;
   float x = v_uv.x + rows_shades; // offset x column depending on row index

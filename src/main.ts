@@ -4,6 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { SSAARenderPass } from "three/examples/jsm/postprocessing/SSAARenderPass"
+import { explosionMaterial } from "./shaders/explosion"
 import { uvGridMaterial } from "./shaders/uvGrid"
 import "./style.css"
 
@@ -12,19 +13,20 @@ const MAX_PIXEL_RATIO = 2
 const main = () => {
   const scene = new THREE.Scene()
 
-  const camera = new THREE.PerspectiveCamera(
-    50,
-    1, // default aspect ratio updated before first render by createThreePlayground
-    0.1,
-    100,
-  )
-  camera.position.z = 3
-  camera.position.x = 1
-  camera.position.y = 1
+  // Setup camera
+  const fov = 50 // degres
+  const aspect = window.innerWidth / window.innerHeight
+  const near = 0.1
+  const far = 100
+  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
+  camera.position.z = 15
+  camera.position.x = 0
+  camera.position.y = 0
   camera.lookAt(new THREE.Vector3(0, 0, 0))
 
+  // Setup background plane
   const backgroundPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(1, 1),
+    new THREE.PlaneGeometry(10, 10),
     uvGridMaterial({
       scale: 10,
       color1: new THREE.Color(0xecf0f1),
@@ -33,8 +35,13 @@ const main = () => {
   )
   scene.add(backgroundPlane)
 
-  const axes = new THREE.AxesHelper(3)
-  scene.add(axes)
+  // Setup plane with explosion shader
+  const explosionPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(4, 4),
+    explosionMaterial({}),
+  )
+  explosionPlane.translateZ(1)
+  scene.add(explosionPlane)
 
   createPlayground({ scene, camera })
 }
