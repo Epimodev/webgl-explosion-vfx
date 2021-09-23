@@ -4,6 +4,11 @@ uniform float u_time;
 
 varying vec2 v_uv;
 
+const vec3 c1 = vec3(0.0);
+const vec3 c2 = vec3(1.0, 0.0, 0.0);
+const vec3 c3 = vec3(1.0, 0.5, 0.0);
+const vec3 c4 = vec3(1.0, 1.0, 0.5);
+
 float lerp(float min, float max, float value) {
   return (max - min) * value + min;
 }
@@ -15,6 +20,13 @@ float invLerp(float min, float max, float value) {
 float remap(float inputMin, float inputMax, float outputMin, float outputMax, float value) {
   float t = invLerp(inputMin, inputMax, value);
   return lerp(outputMin, outputMax, t);
+}
+
+vec3 colorRamp(vec3 color1, vec3 color2, vec3 color3, vec3 color4, float value) {
+  vec3 color = mix(color1, color2, smoothstep(0.1, 0.3, value));
+  color = mix(color, color3, smoothstep(0.3, 0.6, value));
+  color = mix(color, color4, smoothstep(0.6, 1.0, value));
+  return color;
 }
 
 // 	<www.shadertoy.com/view/XsX3zB>
@@ -90,6 +102,10 @@ void main() {
   float intensity = remap(0.2, 0.45, 0.0, 1.0, shape);
   float alpha = remap(0.2, 0.3, 0.0, 1.0, shape);
   vec3 color = vec3(intensity);
+
+  // used to test color ramp
+  color = colorRamp(c1, c2, c3, c4, v_uv.x);
+  alpha = 1.0;
 
   gl_FragColor = vec4(color, alpha);
 }
