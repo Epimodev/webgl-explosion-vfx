@@ -99,13 +99,9 @@ void main() {
   float circle = quadraticCircle(v_uv);
   circle = remap(0.6, 1.0, 0.0, 0.5, circle);
   float shape = circle * noiseFac;
-  float intensity = remap(0.2, 0.45, 0.0, 1.0, shape);
+  float intensity = remap(0.25, 0.5, 0.0, 1.0, shape);
   float alpha = remap(0.2, 0.3, 0.0, 1.0, shape);
-  vec3 color = vec3(intensity);
-
-  // used to test color ramp
-  color = colorRamp(c1, c2, c3, c4, v_uv.x);
-  alpha = 1.0;
+  vec3 color = colorRamp(c1, c2, c3, c4, intensity);
 
   gl_FragColor = vec4(color, alpha);
 }
