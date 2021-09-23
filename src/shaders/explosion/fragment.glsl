@@ -1,13 +1,17 @@
 precision highp float;
 
 uniform float u_time;
+uniform float u_speed;
+uniform float u_intensityMin;
+uniform float u_intensityMax;
+uniform float u_alphaMin;
+uniform float u_alphaMax;
+uniform vec3 u_c1;
+uniform vec3 u_c2;
+uniform vec3 u_c3;
+uniform vec3 u_c4;
 
 varying vec2 v_uv;
-
-const vec3 c1 = vec3(0.0);
-const vec3 c2 = vec3(1.0, 0.0, 0.0);
-const vec3 c3 = vec3(1.0, 0.5, 0.0);
-const vec3 c4 = vec3(1.0, 1.0, 0.5);
 
 float lerp(float min, float max, float value) {
   return (max - min) * value + min;
@@ -95,13 +99,13 @@ float quadraticCircle(vec2 coordinate) {
 }
 
 void main() {
-  float noiseFac = snoiseFractal(vec3(v_uv * 5.0, u_time));
+  float noiseFac = snoiseFractal(vec3(v_uv * 5.0, u_time * u_speed));
   float circle = quadraticCircle(v_uv);
   circle = remap(0.6, 1.0, 0.0, 0.5, circle);
   float shape = circle * noiseFac;
-  float intensity = remap(0.25, 0.5, 0.0, 1.0, shape);
-  float alpha = remap(0.2, 0.3, 0.0, 1.0, shape);
-  vec3 color = colorRamp(c1, c2, c3, c4, intensity);
+  float intensity = remap(u_intensityMin, u_intensityMax, 0.0, 1.0, shape);
+  float alpha = remap(u_alphaMin, u_alphaMax, 0.0, 1.0, shape);
+  vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, intensity);
 
   gl_FragColor = vec4(color, alpha);
 }

@@ -46,7 +46,7 @@ const main = () => {
     camera,
     onTick: () => {
       const elapsedTime = clock.getElapsedTime()
-      material.uniforms.u_time.value = elapsedTime / 7
+      material.uniforms.u_time.value = elapsedTime / 10
     },
   })
 }
