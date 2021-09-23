@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 uniform float u_time;
 
@@ -85,8 +85,11 @@ float quadraticCircle(vec2 coordinate) {
 void main() {
   float noiseFac = snoiseFractal(vec3(v_uv * 5.0, u_time));
   float circle = quadraticCircle(v_uv);
-  circle = invLerp(0.8, 1.0, circle);
-  vec3 color = vec3(noiseFac);
+  circle = remap(0.6, 1.0, 0.0, 0.5, circle);
+  float shape = circle * noiseFac;
+  float intensity = remap(0.2, 0.45, 0.0, 1.0, shape);
+  float alpha = remap(0.2, 0.3, 0.0, 1.0, shape);
+  vec3 color = vec3(intensity);
 
-  gl_FragColor = vec4(color, 1.0);
+  gl_FragColor = vec4(color, alpha);
 }

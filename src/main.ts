@@ -1,9 +1,6 @@
 import Stats from "stats.js"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
-import { SSAARenderPass } from "three/examples/jsm/postprocessing/SSAARenderPass"
 import { explosionMaterial } from "./shaders/explosion"
 import { uvGridMaterial } from "./shaders/uvGrid"
 import "./style.css"
@@ -83,13 +80,10 @@ const createPlayground = ({
   const size = { width: 0, height: 0 }
 
   // Renderer
-  const renderer = new THREE.WebGLRenderer({ canvas })
-  const effectComposer = new EffectComposer(renderer)
-  const renderPass = new RenderPass(scene, camera)
-  // @ts-expect-error
-  const antialiasingPass = new SSAARenderPass(scene, camera)
-  effectComposer.addPass(renderPass)
-  effectComposer.addPass(antialiasingPass)
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+  })
 
   // Controls
   const controls = new OrbitControls(camera, canvas)
@@ -113,8 +107,6 @@ const createPlayground = ({
     // Update renderer and effect composer size and pixel ratio
     renderer.setSize(size.width, size.height)
     renderer.setPixelRatio(pixelRatio)
-    effectComposer.setSize(size.width, size.height)
-    effectComposer.setPixelRatio(pixelRatio)
 
     // Create a new instance because `size` object is changed on resize
     onResize?.({ width: size.width, height: size.height })
@@ -133,7 +125,7 @@ const createPlayground = ({
     controls.update()
 
     // Render
-    effectComposer.render()
+    renderer.render(scene, camera)
 
     stats.end()
     // Call tick again on the next frame
