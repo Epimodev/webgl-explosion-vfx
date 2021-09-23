@@ -1,6 +1,7 @@
 import Stats from "stats.js"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { uvGridMaterial } from "./shaders/uvGrid"
 import "./style.css"
 
 const MAX_PIXEL_RATIO = 2
@@ -18,6 +19,16 @@ const main = () => {
   camera.position.x = 1
   camera.position.y = 1
   camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+  const backgroundPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(1, 1),
+    uvGridMaterial({
+      scale: 10,
+      color1: new THREE.Color(0xecf0f1),
+      color2: new THREE.Color(0x7f8c8d),
+    }),
+  )
+  scene.add(backgroundPlane)
 
   const axes = new THREE.AxesHelper(3)
   scene.add(axes)
