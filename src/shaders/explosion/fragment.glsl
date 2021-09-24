@@ -2,10 +2,10 @@ precision highp float;
 
 uniform float u_time;
 uniform float u_speed;
-uniform float u_intensityMin;
-uniform float u_intensityMax;
-uniform float u_alphaMin;
-uniform float u_alphaMax;
+uniform float u_intensityOffset;
+uniform float u_intensityAmplitude;
+uniform float u_alphaOffset;
+uniform float u_alphaAmplitude;
 uniform vec3 u_c1;
 uniform vec3 u_c2;
 uniform vec3 u_c3;
@@ -103,8 +103,8 @@ void main() {
   float circle = quadraticCircle(v_uv);
   circle = remap(0.6, 1.0, 0.0, 0.5, circle);
   float shape = circle * noiseFac;
-  float intensity = remap(u_intensityMin, u_intensityMax, 0.0, 1.0, shape);
-  float alpha = remap(u_alphaMin, u_alphaMax, 0.0, 1.0, shape);
+  float intensity = remap(u_intensityOffset, u_intensityOffset + u_intensityAmplitude, 0.0, 1.0, shape);
+  float alpha = remap(u_alphaOffset, u_alphaOffset + u_alphaAmplitude, 0.0, 1.0, shape);
   vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, intensity);
 
   gl_FragColor = vec4(color, alpha);

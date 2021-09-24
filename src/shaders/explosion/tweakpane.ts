@@ -20,26 +20,26 @@ export const explosionPane = (material: THREE.RawShaderMaterial): void => {
     max: 10,
     step: 0.01,
   })
-  pane.addInput(material.uniforms.u_intensityMin, "value", {
-    label: "intensity min",
+  pane.addInput(material.uniforms.u_intensityOffset, "value", {
+    label: "intensity offset",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  pane.addInput(material.uniforms.u_intensityMax, "value", {
-    label: "intensity max",
+  pane.addInput(material.uniforms.u_intensityAmplitude, "value", {
+    label: "intensity amplitude",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  pane.addInput(material.uniforms.u_alphaMin, "value", {
-    label: "alpha min",
+  pane.addInput(material.uniforms.u_alphaOffset, "value", {
+    label: "alpha offset",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  pane.addInput(material.uniforms.u_alphaMax, "value", {
-    label: "alpha max",
+  pane.addInput(material.uniforms.u_alphaAmplitude, "value", {
+    label: "alpha amplitude",
     min: 0,
     max: 1,
     step: 0.01,
