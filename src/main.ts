@@ -2,6 +2,7 @@ import Stats from "stats.js"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { explosionMaterial } from "./shaders/explosion"
+import { explosionPane } from "./shaders/explosion/tweakpane"
 import { uvGridMaterial } from "./shaders/uvGrid"
 import "./style.css"
 
@@ -37,6 +38,9 @@ const main = () => {
   const explosionPlane = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), material)
   explosionPlane.translateZ(1)
   scene.add(explosionPlane)
+
+  // Setup pane config
+  explosionPane(material)
 
   const clock = new THREE.Clock()
   clock.start()

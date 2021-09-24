@@ -80,6 +80,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@tweakpane/core@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@tweakpane/core/-/core-1.0.6.tgz#cfdecd9612caab72f25abc60bfab9df2c1381f4c"
+  integrity sha512-Q5331dFAgGyLvQHzrUdK11FV5nX7UTucW2x9w/Nl0h2zd/qtxs9mtbYSU5xEGnj5mtuI095CMV3mcQjYpyTCkQ==
+
 "@types/json-schema@^7.0.7":
   version "7.0.9"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.9.tgz#97edc9037ea0c38585320b28964dde3b39e4660d"
@@ -1841,6 +1846,11 @@ tsutils@^3.21.0:
   integrity sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==
   dependencies:
     tslib "^1.8.1"
+
+tweakpane@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/tweakpane/-/tweakpane-3.0.5.tgz#0dc76ac129b4b771dc6491558aec6e5516984946"
+  integrity sha512-HivFjOs510RbZSNgxv4x5LVFsHFN1ryfgpOp3n6wrgg1jLxbdlA/UTIbTLi/DYH7g76rGQqW/+IRmHPfjIujpQ==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
