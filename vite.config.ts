@@ -1,5 +1,6 @@
-import fs from "fs/promises"
+import fs from "fs"
 import glslx from "glslx"
+import path from "path"
 import { defineConfig, Plugin } from "vite"
 import Inspect from "vite-plugin-inspect"
 
@@ -25,12 +26,26 @@ function glslxPlugin({
     name: "vite:glslx-plugin",
     transform(code, id) {
       if (id.endsWith(".glslx")) {
-        const { output } = glslx.compile(code, {
+        const { output, log } = glslx.compile(code, {
           format: "json",
           renaming: disableRename ? "none" : "internal-only",
+          fileAccess: (filePath, relativeTo) => {
+            const absolutePath =
+              relativeTo === "<stdin>"
+                ? path.resolve(id, "..", filePath)
+                : path.resolve(id, "..", relativeTo, "..", filePath)
+
+            const data = fs.readFileSync(absolutePath, { encoding: "utf-8" })
+            return data
+          },
           prettyPrint,
           keepSymbols,
         })
+
+        if (log) {
+          throw new Error(log)
+        }
+
         const result = JSON.parse(output)
 
         const resultCode = result.shaders.reduce((acc, { name, contents }) => {
@@ -45,7 +60,16 @@ function glslxPlugin({
           })
           typeDeclaration += "}\nexport = shaders;\n"
           const filePath = `${id}.d.ts`
-          fs.writeFile(filePath, typeDeclaration, { encoding: "utf-8" })
+          fs.writeFile(
+            filePath,
+            typeDeclaration,
+            { encoding: "utf-8" },
+            err => {
+              if (err) {
+                throw err
+              }
+            },
+          )
         }
 
         return resultCode
