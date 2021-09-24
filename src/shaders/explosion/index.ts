@@ -16,9 +16,10 @@ export const explosionMaterial =
       uniforms: {
         u_time: { value: 0 },
         u_speed: { value: 2 },
-        u_intensityOffset: { value: 0.25 },
+        u_noiseScale: { value: 1.6 },
+        u_intensityOffset: { value: 0.22 },
         u_intensityAmplitude: { value: 0.25 },
-        u_alphaOffset: { value: 0.2 },
+        u_alphaOffset: { value: 0.16 },
         u_alphaAmplitude: { value: 0.1 },
         u_c1: { value: new THREE.Color(0x000000) },
         u_c2: { value: new THREE.Color(0xff0000) },

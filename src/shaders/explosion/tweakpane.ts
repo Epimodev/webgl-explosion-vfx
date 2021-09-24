@@ -20,6 +20,12 @@ export const explosionPane = (material: THREE.RawShaderMaterial): void => {
     max: 10,
     step: 0.01,
   })
+  pane.addInput(material.uniforms.u_noiseScale, "value", {
+    label: "noise scale",
+    min: 0.1,
+    max: 5,
+    step: 0.01,
+  })
   pane.addInput(material.uniforms.u_intensityOffset, "value", {
     label: "intensity offset",
     min: 0,

@@ -3,11 +3,13 @@ precision highp float;
 attribute vec3 position;
 attribute vec2 uv;
 
+uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
 uniform float u_time;
 uniform float u_speed;
+uniform float u_noiseScale;
 uniform float u_intensityOffset;
 uniform float u_intensityAmplitude;
 uniform float u_alphaOffset;
@@ -17,6 +19,7 @@ uniform vec3 u_c2;
 uniform vec3 u_c3;
 uniform vec3 u_c4;
 
+varying vec3 v_position;
 varying vec2 v_uv;
 
 // #include "../utils/interpolation.glslx" already imported by noise.glslx
@@ -38,11 +41,12 @@ float quadraticCircle(vec2 coordinate) {
 export void vertex() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
+  v_position = (modelMatrix * vec4(position, 1.0)).xyz;
   v_uv = uv;
 }
 
 export void fragment() {
-  float noiseFac = snoiseFractal(vec3(v_uv * 5.0, u_time * u_speed));
+  float noiseFac = snoiseFractal(vec3(v_position.xy * u_noiseScale, u_time * u_speed));
   float circle = quadraticCircle(v_uv);
   circle = remap(0.6, 1.0, 0.0, 0.5, circle);
   float shape = circle * noiseFac;
