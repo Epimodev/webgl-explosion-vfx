@@ -1,6 +1,7 @@
 import * as THREE from "three"
-import fragment from "./fragment.glsl?raw"
-import vertex from "./vertex.glsl?raw"
+// import fragment from "./fragment.glsl?raw"
+// import vertex from "./vertex.glsl?raw"
+import { fragment, vertex } from "./shaders.glslx"
 
 type ExplosionMaterialParams = {} // eslint-disable-line
 

@@ -1,5 +1,11 @@
 precision highp float;
 
+attribute vec3 position;
+attribute vec2 uv;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
 uniform float u_time;
 uniform float u_speed;
 uniform float u_intensityOffset;
@@ -98,7 +104,13 @@ float quadraticCircle(vec2 coordinate) {
   return 1.0 - quadraticDistance;
 }
 
-void main() {
+export void vertex() {
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+  v_uv = uv;
+}
+
+export void fragment() {
   float noiseFac = snoiseFractal(vec3(v_uv * 5.0, u_time * u_speed));
   float circle = quadraticCircle(v_uv);
   circle = remap(0.6, 1.0, 0.0, 0.5, circle);
