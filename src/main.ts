@@ -3,7 +3,6 @@ import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { explosionMaterial } from "./shaders/explosion"
 import { explosionPane } from "./shaders/explosion/tweakpane"
-import { uvGridMaterial } from "./shaders/uvGrid"
 import "./style.css"
 
 const MAX_PIXEL_RATIO = 2
@@ -21,17 +20,6 @@ const main = () => {
   camera.position.x = 0
   camera.position.y = 0
   camera.lookAt(new THREE.Vector3(0, 0, 0))
-
-  // Setup background plane
-  const backgroundPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 10),
-    uvGridMaterial({
-      scale: 10,
-      color1: new THREE.Color(0xecf0f1),
-      color2: new THREE.Color(0x7f8c8d),
-    }),
-  )
-  scene.add(backgroundPlane)
 
   // Setup plane with explosion shader
   const material = explosionMaterial({})
@@ -88,6 +76,7 @@ const createPlayground = ({
     canvas,
     antialias: true,
   })
+  renderer.setClearColor(0xecf0f1)
 
   // Controls
   const controls = new OrbitControls(camera, canvas)
