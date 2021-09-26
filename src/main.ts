@@ -1,6 +1,7 @@
 import Stats from "stats.js"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { createExplosion } from "./explosion"
 import { explosionMaterial } from "./shaders/explosion"
 import { explosionPane } from "./shaders/explosion/tweakpane"
 import "./style.css"
@@ -24,15 +25,13 @@ const main = () => {
   // Setup plane with explosion shader
   const geometry = new THREE.PlaneGeometry(4, 4)
   const material = explosionMaterial({})
-  const explosionPlane1 = new THREE.Mesh(geometry, material)
-  explosionPlane1.position.set(0, 0, 1)
-  scene.add(explosionPlane1)
-  const explosionPlane2 = new THREE.Mesh(geometry, material)
-  explosionPlane2.position.set(5, 2, 0)
-  scene.add(explosionPlane2)
-  const explosionPlane3 = new THREE.Mesh(geometry, material)
-  explosionPlane3.position.set(-4, 3, -2)
-  scene.add(explosionPlane3)
+  const explosionPlane = new THREE.Mesh(geometry, material)
+  explosionPlane.position.set(0, 0, 1)
+  // scene.add(explosionPlane)
+
+  // Create 1 explosion
+  const explosion = createExplosion()
+  scene.add(explosion)
 
   // Setup pane config
   explosionPane(material)

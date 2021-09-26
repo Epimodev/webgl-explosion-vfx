@@ -1,0 +1,30 @@
+precision highp float;
+
+attribute vec3 position;
+attribute float radiusCoef;
+
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
+
+uniform float u_distance;
+uniform float u_randomness;
+
+export void vertex() {
+  float randomCoef = u_randomness * radiusCoef;
+  vec3 particulePosition = position * u_distance * (1.0 + randomCoef);
+  vec4 vertexPosition = modelMatrix * vec4(particulePosition, 1.0);
+  vec4 viewPosition = viewMatrix * vertexPosition;
+
+  gl_Position = projectionMatrix * viewPosition;
+  gl_PointSize = 800.0;
+  gl_PointSize /= -viewPosition.z;
+}
+
+export void fragment() {
+  vec2 uv = gl_PointCoord;
+  float strength = 1.0 - distance(uv, vec2(0.5));
+  strength = step(0.5, strength);
+
+  gl_FragColor = vec4(vec3(0.0), strength);
+}
