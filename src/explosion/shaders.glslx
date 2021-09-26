@@ -17,7 +17,7 @@ export void vertex() {
   vec4 viewPosition = viewMatrix * vertexPosition;
 
   gl_Position = projectionMatrix * viewPosition;
-  gl_PointSize = 800.0;
+  gl_PointSize = 1200.0;
   gl_PointSize /= -viewPosition.z;
 }
 

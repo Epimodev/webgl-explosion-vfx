@@ -1,9 +1,10 @@
 import Stats from "stats.js"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { Timeline } from "./animation"
+import * as Easing from "./animation/easing"
 import { createExplosion } from "./explosion"
-import { explosionMaterial } from "./shaders/explosion"
-import { explosionPane } from "./shaders/explosion/tweakpane"
+import { explosionPane } from "./explosion/tweakpane"
 import "./style.css"
 
 const MAX_PIXEL_RATIO = 2
@@ -17,24 +18,36 @@ const main = () => {
   const near = 0.1
   const far = 100
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
-  camera.position.z = 15
+  camera.position.z = 20
   camera.position.x = 0
-  camera.position.y = 0
+  camera.position.y = 5
   camera.lookAt(new THREE.Vector3(0, 0, 0))
 
   // Setup plane with explosion shader
-  const geometry = new THREE.PlaneGeometry(4, 4)
-  const material = explosionMaterial({})
-  const explosionPlane = new THREE.Mesh(geometry, material)
-  explosionPlane.position.set(0, 0, 1)
+  // const geometry = new THREE.PlaneGeometry(4, 4)
+  // const material = explosionMaterial({})
+  // const explosionPlane = new THREE.Mesh(geometry, material)
+  // explosionPlane.position.set(0, 0, 1)
   // scene.add(explosionPlane)
 
   // Create 1 explosion
   const explosion = createExplosion()
   scene.add(explosion)
 
+  const explosionTimeline = new Timeline([
+    {
+      easing: Easing.easeOutQuint,
+      from: 1,
+      to: 6,
+      startAt: 500,
+      endAt: 1500,
+      target: explosion.material.uniforms.u_distance,
+      key: "value",
+    },
+  ])
+
   // Setup pane config
-  explosionPane(material)
+  explosionPane(explosionTimeline)
 
   const clock = new THREE.Clock()
   clock.start()
@@ -43,8 +56,8 @@ const main = () => {
     scene,
     camera,
     onTick: () => {
-      const elapsedTime = clock.getElapsedTime()
-      material.uniforms.u_time.value = elapsedTime / 10
+      // const elapsedTime = clock.getElapsedTime()
+      // material.uniforms.u_time.value = elapsedTime / 10
     },
   })
 }

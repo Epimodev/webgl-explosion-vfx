@@ -52,7 +52,10 @@ class SemiIcosphere extends THREE.BufferGeometry {
   }
 }
 
-export const createExplosion = (): THREE.Points => {
+export const createExplosion = (): THREE.Points<
+  THREE.BufferGeometry,
+  THREE.RawShaderMaterial
+> => {
   const geometry = new SemiIcosphere()
   const material = new THREE.RawShaderMaterial({
     transparent: true,
@@ -62,7 +65,7 @@ export const createExplosion = (): THREE.Points => {
     fragmentShader: fragment,
     uniforms: {
       u_distance: {
-        value: 2.0,
+        value: 1.0,
       },
       u_randomness: {
         value: 0.5,
@@ -70,5 +73,8 @@ export const createExplosion = (): THREE.Points => {
     },
   })
 
-  return new THREE.Points(geometry, material)
+  const points = new THREE.Points(geometry, material)
+  points.scale.y = 0.7
+
+  return points
 }
