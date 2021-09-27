@@ -28,45 +28,65 @@ const main = () => {
   scene.add(explosion)
 
   const explosionTimeline = new Timeline([
-    // before explosion
     {
-      easing: Easing.easeOutExpo,
-      from: 0.5,
-      to: 0.16,
-      startAt: 50,
-      endAt: 100,
       target: explosion.material.uniforms.u_alphaOffset,
       key: "value",
+      initialValue: 0.5,
+      keyframes: [
+        {
+          delay: 50,
+          duration: 50,
+          value: 0.16,
+          easing: Easing.linear,
+        },
+        {
+          duration: 1500,
+          value: 0.25,
+          easing: Easing.easeOutExpo,
+        },
+      ],
     },
-    // Explosion radius
     {
-      easing: Easing.easeOutExpo,
-      from: 1,
-      to: 6,
-      startAt: 100,
-      endAt: 600,
       target: explosion.material.uniforms.u_distance,
       key: "value",
+      initialValue: 1,
+      keyframes: [
+        {
+          delay: 100,
+          duration: 500,
+          value: 6,
+          easing: Easing.easeOutExpo,
+        },
+      ],
     },
     {
-      easing: Easing.easeOutExpo,
-      from: 0,
-      to: 0.5,
-      startAt: 100,
-      endAt: 1600,
       target: explosion.material.uniforms.u_intensityOffset,
       key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 100,
+          duration: 1500,
+          value: 0.5,
+          easing: Easing.easeOutExpo,
+        },
+      ],
     },
     {
-      easing: Easing.easeOutExpo,
-      from: 0.1,
-      to: 0.18,
-      startAt: 100,
-      endAt: 1600,
       target: explosion.material.uniforms.u_alphaAmplitude,
       key: "value",
+      initialValue: 0.1,
+      keyframes: [
+        {
+          delay: 100,
+          duration: 1500,
+          value: 0.25,
+          easing: Easing.easeOutExpo,
+        },
+      ],
     },
   ])
+
   explosionTimeline.seek(260)
 
   // Setup pane config

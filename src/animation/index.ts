@@ -1,13 +1,33 @@
 import { EasingFunction } from "./easing"
 
-type AnimationTimelineItem<T = any> = {
-  startAt: number
-  endAt: number
+// use an API with delay and duration to avoid errors as overlaping startAt and endAt and ensure the order of values as having endAt < startAt
+type TimelineKeyframe = {
+  delay?: number
+  duration: number
+  value: number
   easing: EasingFunction
+}
+
+type TimelineVariable<T = any> = {
   target: T
   key: keyof T
+  initialValue: number
+  keyframes: TimelineKeyframe[]
+}
+
+// Convert internally animations with startAt and endAt to make value computation easier with animation timestamp
+type ComputedKeyframe = {
+  startAt: number
+  endAt: number
   from: number
   to: number
+  easing: EasingFunction
+}
+
+type ComputedTimelineVariable<T = any> = {
+  target: T
+  key: keyof T
+  keyframes: ComputedKeyframe[]
 }
 
 const lerp = (min: number, max: number, value: number): number => {
@@ -18,19 +38,122 @@ const invLerp = (min: number, max: number, value: number): number => {
   return (value - min) / (max - min)
 }
 
-const clamp = (value: number): number => {
-  return Math.min(Math.max(value, 0), 1)
+const computeKeyframes = (
+  initialValue: number,
+  keyframes: TimelineKeyframe[],
+): ComputedKeyframe[] => {
+  const result: ComputedKeyframe[] = []
+  let previousKeyframe: ComputedKeyframe | undefined
+
+  for (const { delay = 0, duration, value, easing } of keyframes) {
+    if (delay > 0) {
+      const startAt = previousKeyframe?.endAt ?? 0
+      const endAt = startAt + delay
+      const delayValue = previousKeyframe?.to ?? initialValue
+      const delayKeyframe = {
+        startAt,
+        endAt,
+        from: delayValue,
+        to: delayValue,
+        easing,
+      }
+      result.push(delayKeyframe)
+      previousKeyframe = delayKeyframe
+    }
+
+    const startAt = previousKeyframe?.endAt ?? 0
+    const endAt = startAt + duration
+    const from = previousKeyframe?.to ?? initialValue
+    const to = value
+    const keyframe = {
+      startAt,
+      endAt,
+      from,
+      to,
+      easing,
+    }
+    result.push(keyframe)
+    previousKeyframe = keyframe
+  }
+
+  return result
+}
+
+const computeTimeline = (
+  variables: TimelineVariable[],
+): ComputedTimelineVariable[] => {
+  return variables.map(({ target, key, initialValue, keyframes }) => {
+    return {
+      target,
+      key,
+      keyframes: computeKeyframes(initialValue, keyframes),
+    }
+  })
+}
+
+const findKeyframe = (
+  keyframes: ComputedKeyframe[],
+  timestamp: number,
+): ComputedKeyframe => {
+  const firstKeyframe = keyframes[0]
+  const lastKeyframe = keyframes[keyframes.length - 1]
+  if (timestamp < firstKeyframe.startAt) {
+    return firstKeyframe
+  }
+  if (timestamp > lastKeyframe.endAt) {
+    return lastKeyframe
+  }
+
+  return keyframes.find(
+    ({ startAt, endAt }) => timestamp >= startAt && timestamp <= endAt,
+  )!
+}
+
+const getValue = (
+  { keyframes }: ComputedTimelineVariable,
+  timestamp: number,
+): number => {
+  const { startAt, endAt, from, to, easing } = findKeyframe(
+    keyframes,
+    timestamp,
+  )
+  // if the value is constant during a part of the animation
+  if (from === to) {
+    return from
+  }
+
+  const progress = invLerp(startAt, endAt, timestamp)
+  // if animation hasn't started or is completed, no need to compute easing
+  if (progress <= 0) {
+    return from
+  }
+  if (progress >= 1) {
+    return to
+  }
+
+  const valueProgress = easing(progress)
+  return lerp(from, to, valueProgress)
+}
+
+const isTimelineCompleted = (
+  variables: ComputedTimelineVariable[],
+  timestamp: number,
+): boolean => {
+  return variables.every(({ keyframes }) => {
+    const lastKeyframe = keyframes[keyframes.length - 1]
+    return lastKeyframe.endAt < timestamp
+  })
 }
 
 export class Timeline {
   private frame: number | null
-  private items: AnimationTimelineItem[]
+  private variables: ComputedTimelineVariable[]
   private timestamp: number
   private listeners: (() => void)[]
 
-  constructor(items: AnimationTimelineItem[]) {
+  constructor(variables: TimelineVariable[]) {
     this.frame = null
-    this.items = items
+    this.variables = computeTimeline(variables)
     this.timestamp = 0
     this.listeners = []
   }
@@ -48,27 +171,12 @@ export class Timeline {
       lastTimestamp = now
       this.timestamp += elapsedTimeFromLastFrame
 
-      let completed = true
-
-      for (const item of this.items) {
-        // if timestamp is upper than animation end, we set the value to the final value
-        const progress = Math.min(
-          invLerp(item.startAt, item.endAt, this.timestamp),
-          1,
-        )
-        if (progress < 1) {
-          completed = false
-        }
-        // if this item animatin hasn't started
-        if (progress <= 0) {
-          continue
-        }
-
-        const animationProgress = item.easing(progress)
-        const value = lerp(item.from, item.to, animationProgress)
-        item.target[item.key] = value
+      for (const variable of this.variables) {
+        const value = getValue(variable, this.timestamp)
+        variable.target[variable.key] = value
       }
 
+      const completed = isTimelineCompleted(this.variables, this.timestamp)
       if (completed) {
         for (const completeListener of this.listeners) {
           completeListener()
@@ -91,13 +199,9 @@ export class Timeline {
   seek(timestamp: number): void {
     this.timestamp = timestamp
 
-    for (const item of this.items) {
-      // clamp value between 0 and 1
-      const progress = clamp(invLerp(item.startAt, item.endAt, this.timestamp))
-
-      const animationProgress = item.easing(progress)
-      const value = lerp(item.from, item.to, animationProgress)
-      item.target[item.key] = value
+    for (const variable of this.variables) {
+      const value = getValue(variable, this.timestamp)
+      variable.target[variable.key] = value
     }
   }
 
