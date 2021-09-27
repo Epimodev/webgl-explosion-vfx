@@ -64,12 +64,19 @@ export const createExplosion = (): THREE.Points<
     vertexShader: vertex,
     fragmentShader: fragment,
     uniforms: {
-      u_distance: {
-        value: 1.0,
-      },
-      u_randomness: {
-        value: 0.5,
-      },
+      u_distance: { value: 1.0 },
+      u_randomness: { value: 0.5 },
+      u_time: { value: 0 },
+      u_speed: { value: 2 },
+      u_noiseScale: { value: 4 },
+      u_intensityOffset: { value: 0.22 },
+      u_intensityAmplitude: { value: 0.25 },
+      u_alphaOffset: { value: 0.16 },
+      u_alphaAmplitude: { value: 0.1 },
+      u_c1: { value: new THREE.Color(0x000000) },
+      u_c2: { value: new THREE.Color(0xff0000) },
+      u_c3: { value: new THREE.Color(0xff8800) },
+      u_c4: { value: new THREE.Color(0xffff88) },
     },
   })
 

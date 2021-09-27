@@ -23,31 +23,54 @@ const main = () => {
   camera.position.y = 5
   camera.lookAt(new THREE.Vector3(0, 0, 0))
 
-  // Setup plane with explosion shader
-  // const geometry = new THREE.PlaneGeometry(4, 4)
-  // const material = explosionMaterial({})
-  // const explosionPlane = new THREE.Mesh(geometry, material)
-  // explosionPlane.position.set(0, 0, 1)
-  // scene.add(explosionPlane)
-
   // Create 1 explosion
   const explosion = createExplosion()
   scene.add(explosion)
 
   const explosionTimeline = new Timeline([
+    // before explosion
     {
-      easing: Easing.easeOutQuint,
+      easing: Easing.easeOutExpo,
+      from: 0.5,
+      to: 0.16,
+      startAt: 50,
+      endAt: 100,
+      target: explosion.material.uniforms.u_alphaOffset,
+      key: "value",
+    },
+    // Explosion radius
+    {
+      easing: Easing.easeOutExpo,
       from: 1,
       to: 6,
-      startAt: 500,
-      endAt: 1500,
+      startAt: 100,
+      endAt: 600,
       target: explosion.material.uniforms.u_distance,
       key: "value",
     },
+    {
+      easing: Easing.easeOutExpo,
+      from: 0,
+      to: 0.5,
+      startAt: 100,
+      endAt: 1600,
+      target: explosion.material.uniforms.u_intensityOffset,
+      key: "value",
+    },
+    {
+      easing: Easing.easeOutExpo,
+      from: 0.1,
+      to: 0.18,
+      startAt: 100,
+      endAt: 1600,
+      target: explosion.material.uniforms.u_alphaAmplitude,
+      key: "value",
+    },
   ])
+  explosionTimeline.seek(260)
 
   // Setup pane config
-  explosionPane(explosionTimeline)
+  explosionPane(explosion.material, explosionTimeline)
 
   const clock = new THREE.Clock()
   clock.start()
@@ -56,8 +79,8 @@ const main = () => {
     scene,
     camera,
     onTick: () => {
-      // const elapsedTime = clock.getElapsedTime()
-      // material.uniforms.u_time.value = elapsedTime / 10
+      const elapsedTime = clock.getElapsedTime()
+      explosion.material.uniforms.u_time.value = elapsedTime / 10
     },
   })
 }

@@ -10,6 +10,36 @@ uniform mat4 modelMatrix;
 uniform float u_distance;
 uniform float u_randomness;
 
+uniform float u_time;
+uniform float u_speed;
+uniform float u_noiseScale;
+uniform float u_intensityOffset;
+uniform float u_intensityAmplitude;
+uniform float u_alphaOffset;
+uniform float u_alphaAmplitude;
+uniform vec3 u_c1;
+uniform vec3 u_c2;
+uniform vec3 u_c3;
+uniform vec3 u_c4;
+
+varying float v_radiusCoef;
+
+#include "../shaders/utils/interpolation.glslx"
+#include "../shaders/utils/noise.glslx"
+
+vec3 colorRamp(vec3 color1, vec3 color2, vec3 color3, vec3 color4, float value) {
+  vec3 color = mix(color1, color2, smoothstep(0.1, 0.3, value));
+  color = mix(color, color3, smoothstep(0.3, 0.6, value));
+  color = mix(color, color4, smoothstep(0.6, 1.0, value));
+  return color;
+}
+
+float quadraticCircle(vec2 coordinate) {
+  float centerDistance = distance(coordinate, vec2(0.5));
+  float quadraticDistance = pow(centerDistance, 2.0);
+  return 1.0 - quadraticDistance;
+}
+
 export void vertex() {
   float randomCoef = u_randomness * radiusCoef;
   vec3 particulePosition = position * u_distance * (1.0 + randomCoef);
@@ -17,14 +47,23 @@ export void vertex() {
   vec4 viewPosition = viewMatrix * vertexPosition;
 
   gl_Position = projectionMatrix * viewPosition;
-  gl_PointSize = 1200.0;
+  gl_PointSize = 3000.0;
   gl_PointSize /= -viewPosition.z;
+
+  v_radiusCoef = 1.0 + radiusCoef;
 }
 
 export void fragment() {
   vec2 uv = gl_PointCoord;
-  float strength = 1.0 - distance(uv, vec2(0.5));
-  strength = step(0.5, strength);
+  // using v_radiusCoef in noiseFac gives to each particule a different noise
+  float noiseFac = snoiseFractal(vec3(uv * u_noiseScale, v_radiusCoef * u_time * u_speed));
+  noiseFac = invLerp(-1.5, 0.4, noiseFac);
+  float circle = quadraticCircle(uv);
+  circle = remap(0.6, 1.0, 0.0, 0.5, circle);
+  float shape = circle * noiseFac;
+  float intensity = remap(u_intensityOffset, u_intensityOffset + u_intensityAmplitude, 0.0, 1.0, shape);
+  float alpha = remap(u_alphaOffset, u_alphaOffset + u_alphaAmplitude, 0.0, 1.0, shape);
+  vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, intensity);
 
-  gl_FragColor = vec4(vec3(0.0), strength);
+  gl_FragColor = vec4(color, alpha);
 }

@@ -10,38 +10,40 @@ const c1 = 1.70158
 const c3 = c1 + 1
 const c4 = (2 * PI) / 3
 
-export const easeOutQuad: EasingFunction = (x: number) => {
+export const linear: EasingFunction = x => x
+
+export const easeOutQuad: EasingFunction = x => {
   return 1 - (1 - x) * (1 - x)
 }
-export const easeOutCubic: EasingFunction = (x: number) => {
+export const easeOutCubic: EasingFunction = x => {
   return 1 - pow(1 - x, 3)
 }
 
-export const easeOutQuart: EasingFunction = (x: number) => {
+export const easeOutQuart: EasingFunction = x => {
   return 1 - pow(1 - x, 4)
 }
 
-export const easeOutQuint: EasingFunction = (x: number) => {
+export const easeOutQuint: EasingFunction = x => {
   return 1 - pow(1 - x, 5)
 }
 
-export const easeOutSine: EasingFunction = (x: number) => {
+export const easeOutSine: EasingFunction = x => {
   return sin((x * PI) / 2)
 }
 
-export const easeOutExpo: EasingFunction = (x: number) => {
+export const easeOutExpo: EasingFunction = x => {
   return x === 1 ? 1 : 1 - pow(2, -10 * x)
 }
 
-export const easeOutCirc: EasingFunction = (x: number) => {
+export const easeOutCirc: EasingFunction = x => {
   return sqrt(1 - pow(x - 1, 2))
 }
 
-export const easeOutBack: EasingFunction = (x: number) => {
+export const easeOutBack: EasingFunction = x => {
   return 1 + c3 * pow(x - 1, 3) + c1 * pow(x - 1, 2)
 }
 
-export const easeOutElastic: EasingFunction = (x: number) => {
+export const easeOutElastic: EasingFunction = x => {
   return x === 0
     ? 0
     : x === 1
@@ -49,7 +51,7 @@ export const easeOutElastic: EasingFunction = (x: number) => {
     : pow(2, -10 * x) * sin((x * 10 - 0.75) * c4) + 1
 }
 
-export const easeOutBounce: EasingFunction = (x: number): number => {
+export const easeOutBounce: EasingFunction = x => {
   const n1 = 7.5625
   const d1 = 2.75
 
