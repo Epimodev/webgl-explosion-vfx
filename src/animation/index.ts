@@ -203,11 +203,11 @@ export class Timeline {
     return this.frame != null
   }
 
-  addEventListener(type: "completed", listener: () => void): void {
+  addEventListener(_type: "completed", listener: () => void): void {
     this.listeners.push(listener)
   }
 
-  removeEventListener(type: "completed", listener: () => void): void {
+  removeEventListener(_type: "completed", listener: () => void): void {
     const index = this.listeners.indexOf(listener)
     if (index >= 0) {
       this.listeners.splice(index, 1)

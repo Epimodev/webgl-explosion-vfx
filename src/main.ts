@@ -84,7 +84,7 @@ const main = () => {
       keyframes: [
         {
           delay: 200,
-          duration: 1000,
+          duration: 200,
           value: 0.1,
           easing: Easing.linear,
         },
@@ -97,7 +97,7 @@ const main = () => {
       keyframes: [
         {
           delay: 200,
-          duration: 1000,
+          duration: 200,
           value: 0.9,
           easing: Easing.linear,
         },
