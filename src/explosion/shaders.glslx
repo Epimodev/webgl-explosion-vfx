@@ -7,12 +7,15 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
-uniform float u_distance;
+uniform float u_radius;
+uniform float u_particuleScale;
 uniform float u_randomness;
 
 uniform float u_time;
 uniform float u_speed;
 uniform float u_noiseScale;
+uniform float u_circleOffset;
+uniform float u_circleAmplitude;
 uniform float u_intensityOffset;
 uniform float u_intensityAmplitude;
 uniform float u_alphaOffset;
@@ -42,12 +45,12 @@ float quadraticCircle(vec2 coordinate) {
 
 export void vertex() {
   float randomCoef = u_randomness * radiusCoef;
-  vec3 particulePosition = position * u_distance * (1.0 + randomCoef);
+  vec3 particulePosition = position * u_radius * (1.0 + randomCoef);
   vec4 vertexPosition = modelMatrix * vec4(particulePosition, 1.0);
   vec4 viewPosition = viewMatrix * vertexPosition;
 
   gl_Position = projectionMatrix * viewPosition;
-  gl_PointSize = 3000.0;
+  gl_PointSize = 3000.0 * u_particuleScale;
   gl_PointSize /= -viewPosition.z;
 
   v_radiusCoef = 1.0 + radiusCoef;
@@ -59,11 +62,12 @@ export void fragment() {
   float noiseFac = snoiseFractal(vec3(uv * u_noiseScale, v_radiusCoef * u_time * u_speed));
   noiseFac = invLerp(-1.5, 0.4, noiseFac);
   float circle = quadraticCircle(uv);
-  circle = remap(0.6, 1.0, 0.0, 0.5, circle);
+  circle = invLerp(u_circleOffset, u_circleOffset + u_circleAmplitude, circle);
   float shape = circle * noiseFac;
-  float intensity = remap(u_intensityOffset, u_intensityOffset + u_intensityAmplitude, 0.0, 1.0, shape);
-  float alpha = remap(u_alphaOffset, u_alphaOffset + u_alphaAmplitude, 0.0, 1.0, shape);
+  float intensity = invLerp(u_intensityOffset, u_intensityOffset + u_intensityAmplitude, shape);
+  float alpha = invLerp(u_alphaOffset, u_alphaOffset + u_alphaAmplitude, shape);
   vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, intensity);
 
   gl_FragColor = vec4(color, alpha);
+  // gl_FragColor = vec4(vec3(circle), 1.0);
 }

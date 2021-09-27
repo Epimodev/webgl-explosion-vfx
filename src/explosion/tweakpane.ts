@@ -41,10 +41,34 @@ export const explosionPane = (
     max: 10,
     step: 0.01,
   })
+  pane.addInput(material.uniforms.u_radius, "value", {
+    label: "radius",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  pane.addInput(material.uniforms.u_particuleScale, "value", {
+    label: "particule scale",
+    min: 0,
+    max: 5,
+    step: 0.01,
+  })
   pane.addInput(material.uniforms.u_noiseScale, "value", {
     label: "noise scale",
     min: 1,
     max: 10,
+    step: 0.01,
+  })
+  pane.addInput(material.uniforms.u_circleOffset, "value", {
+    label: "circle offset",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  })
+  pane.addInput(material.uniforms.u_circleAmplitude, "value", {
+    label: "circle amplitude",
+    min: 0,
+    max: 1,
     step: 0.01,
   })
   pane.addInput(material.uniforms.u_intensityOffset, "value", {

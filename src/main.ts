@@ -29,65 +29,83 @@ const main = () => {
 
   const explosionTimeline = new Timeline([
     {
-      target: explosion.material.uniforms.u_alphaOffset,
+      target: explosion.material.uniforms.u_circleOffset,
       key: "value",
-      initialValue: 0.5,
+      initialValue: 1.0,
       keyframes: [
         {
-          delay: 50,
-          duration: 50,
-          value: 0.16,
-          easing: Easing.linear,
-        },
-        {
-          duration: 1500,
-          value: 0.25,
+          duration: 10,
+          value: 0.7,
           easing: Easing.easeOutExpo,
         },
       ],
     },
     {
-      target: explosion.material.uniforms.u_distance,
+      target: explosion.material.uniforms.u_radius,
       key: "value",
       initialValue: 1,
       keyframes: [
         {
-          delay: 100,
-          duration: 500,
-          value: 6,
+          duration: 1000,
+          value: 4,
           easing: Easing.easeOutExpo,
         },
       ],
     },
     {
-      target: explosion.material.uniforms.u_intensityOffset,
+      target: explosion.material.uniforms.u_particuleScale,
       key: "value",
-      initialValue: 0,
+      initialValue: 0.3,
       keyframes: [
         {
-          delay: 100,
-          duration: 1500,
-          value: 0.5,
+          duration: 1000,
+          value: 2,
           easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: explosion.material.uniforms.u_circleAmplitude,
+      key: "value",
+      initialValue: 0.15,
+      keyframes: [
+        {
+          delay: 50,
+          duration: 1000,
+          value: 0.85,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: explosion.material.uniforms.u_alphaOffset,
+      key: "value",
+      initialValue: 0.2,
+      keyframes: [
+        {
+          delay: 200,
+          duration: 1000,
+          value: 0.15,
+          easing: Easing.linear,
         },
       ],
     },
     {
       target: explosion.material.uniforms.u_alphaAmplitude,
       key: "value",
-      initialValue: 0.1,
+      initialValue: 0.2,
       keyframes: [
         {
-          delay: 100,
-          duration: 1500,
-          value: 0.25,
-          easing: Easing.easeOutExpo,
+          delay: 200,
+          duration: 1000,
+          value: 0.8,
+          easing: Easing.linear,
         },
       ],
     },
   ])
 
-  explosionTimeline.seek(260)
+  explosionTimeline.seek(10)
 
   // Setup pane config
   explosionPane(explosion.material, explosionTimeline)
@@ -145,8 +163,8 @@ const createPlayground = ({
   controls.enableDamping = true
   controls.dampingFactor = 0.1
   controls.rotateSpeed = 2
-  controls.maxDistance = 30
-  controls.minDistance = 1
+  controls.enablePan = false
+  controls.enableZoom = false
 
   const updateSize = () => {
     // Update size
