@@ -35,6 +35,12 @@ export const explosionPane = (
   pane.addSeparator()
 
   // Explosion effect
+  pane.addInput(material.uniforms.u_height, "value", {
+    label: "height",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
   pane.addInput(material.uniforms.u_speed, "value", {
     label: "speed",
     min: 0,

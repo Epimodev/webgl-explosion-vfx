@@ -1,6 +1,9 @@
 import Stats from "stats.js"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass"
 import { Timeline } from "./animation"
 import * as Easing from "./animation/easing"
 import { createExplosion } from "./explosion"
@@ -78,28 +81,28 @@ const main = () => {
       ],
     },
     {
-      target: explosion.material.uniforms.u_alphaOffset,
+      target: explosion.material.uniforms.u_height,
       key: "value",
-      initialValue: 0.2,
+      initialValue: 0,
       keyframes: [
         {
-          delay: 200,
-          duration: 200,
-          value: 0.1,
-          easing: Easing.linear,
+          delay: 100,
+          duration: 20000,
+          value: 2,
+          easing: Easing.easeOutQuad,
         },
       ],
     },
     {
       target: explosion.material.uniforms.u_alphaAmplitude,
       key: "value",
-      initialValue: 0.2,
+      initialValue: 0.1,
       keyframes: [
         {
-          delay: 200,
-          duration: 200,
-          value: 0.9,
-          easing: Easing.linear,
+          delay: 500,
+          duration: 20000,
+          value: 0.75,
+          easing: Easing.easeOutQuad,
         },
       ],
     },
@@ -158,6 +161,20 @@ const createPlayground = ({
   })
   renderer.setClearColor(0xecf0f1)
 
+  const effectComposer = new EffectComposer(renderer)
+  const renderPass = new RenderPass(scene, camera)
+  const bloomRadius = 0
+  const bloomThreshold = 0
+  const bloomStrength = 0.5
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    bloomStrength,
+    bloomRadius,
+    bloomThreshold,
+  )
+  effectComposer.addPass(renderPass)
+  effectComposer.addPass(bloomPass)
+
   // Controls
   const controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
@@ -180,6 +197,9 @@ const createPlayground = ({
     // Update renderer and effect composer size and pixel ratio
     renderer.setSize(size.width, size.height)
     renderer.setPixelRatio(pixelRatio)
+    effectComposer.setSize(size.width, size.height)
+    effectComposer.setPixelRatio(pixelRatio)
+    bloomPass.setSize(size.width, size.height)
 
     // Create a new instance because `size` object is changed on resize
     onResize?.({ width: size.width, height: size.height })
@@ -198,7 +218,7 @@ const createPlayground = ({
     controls.update()
 
     // Render
-    renderer.render(scene, camera)
+    effectComposer.render()
 
     stats.end()
     // Call tick again on the next frame

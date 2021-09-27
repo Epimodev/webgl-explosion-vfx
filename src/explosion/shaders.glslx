@@ -12,6 +12,7 @@ uniform float u_radius;
 uniform float u_particuleScale;
 
 uniform float u_time;
+uniform float u_height;
 uniform float u_speed;
 uniform float u_noiseScale;
 uniform float u_circleOffset;
@@ -45,6 +46,7 @@ float quadraticCircle(vec2 coordinate) {
 
 export void vertex() {
   vec3 particulePosition = position * u_radius * (1.0 + radiusCoef);
+  particulePosition.y += u_height;
   vec4 vertexPosition = modelMatrix * vec4(particulePosition, 1.0);
   vec4 viewPosition = viewMatrix * vertexPosition;
 
