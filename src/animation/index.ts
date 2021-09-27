@@ -193,6 +193,7 @@ export class Timeline {
   pause(): void {
     if (this.frame != null) {
       cancelAnimationFrame(this.frame)
+      this.frame = null
     }
   }
 
