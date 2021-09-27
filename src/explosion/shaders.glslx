@@ -2,6 +2,7 @@ precision highp float;
 
 attribute vec3 position;
 attribute float radiusCoef;
+attribute float sizeCoef;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -9,7 +10,6 @@ uniform mat4 modelMatrix;
 
 uniform float u_radius;
 uniform float u_particuleScale;
-uniform float u_randomness;
 
 uniform float u_time;
 uniform float u_speed;
@@ -44,13 +44,12 @@ float quadraticCircle(vec2 coordinate) {
 }
 
 export void vertex() {
-  float randomCoef = u_randomness * radiusCoef;
-  vec3 particulePosition = position * u_radius * (1.0 + randomCoef);
+  vec3 particulePosition = position * u_radius * (1.0 + radiusCoef);
   vec4 vertexPosition = modelMatrix * vec4(particulePosition, 1.0);
   vec4 viewPosition = viewMatrix * vertexPosition;
 
   gl_Position = projectionMatrix * viewPosition;
-  gl_PointSize = 3000.0 * u_particuleScale;
+  gl_PointSize = 1000.0 * u_particuleScale * sizeCoef;
   gl_PointSize /= -viewPosition.z;
 
   v_radiusCoef = 1.0 + radiusCoef;
@@ -69,5 +68,4 @@ export void fragment() {
   vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, intensity);
 
   gl_FragColor = vec4(color, alpha);
-  // gl_FragColor = vec4(vec3(circle), 1.0);
 }

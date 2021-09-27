@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import { lerp } from "../math"
 import { fragment, vertex } from "./shaders.glslx"
 
 // Create semi icosphere exported from Blender
@@ -37,8 +38,10 @@ class SemiIcosphere extends THREE.BufferGeometry {
     ]
 
     const radiusCoef: number[] = []
+    const sizeCoef: number[] = []
     for (let i = 0, l = positions.length; i < l; i += 3) {
       radiusCoef.push(Math.random())
+      sizeCoef.push(lerp(0.5, 1, Math.random()))
     }
 
     this.setAttribute(
@@ -49,6 +52,7 @@ class SemiIcosphere extends THREE.BufferGeometry {
       "radiusCoef",
       new THREE.Float32BufferAttribute(radiusCoef, 1),
     )
+    this.setAttribute("sizeCoef", new THREE.Float32BufferAttribute(sizeCoef, 1))
   }
 }
 
@@ -66,7 +70,6 @@ export const createExplosion = (): THREE.Points<
     uniforms: {
       u_radius: { value: 1.0 },
       u_particuleScale: { value: 1.0 },
-      u_randomness: { value: 0.5 },
       u_time: { value: 0 },
       u_speed: { value: 2 },
       u_noiseScale: { value: 4 },

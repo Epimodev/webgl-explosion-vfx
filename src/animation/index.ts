@@ -1,3 +1,4 @@
+import { invLerp, lerp } from "../math"
 import { EasingFunction } from "./easing"
 
 // use an API with delay and duration to avoid errors as overlaping startAt and endAt and ensure the order of values as having endAt < startAt
@@ -28,14 +29,6 @@ type ComputedTimelineVariable<T = any> = {
   target: T
   key: keyof T
   keyframes: ComputedKeyframe[]
-}
-
-const lerp = (min: number, max: number, value: number): number => {
-  return (max - min) * value + min
-}
-
-const invLerp = (min: number, max: number, value: number): number => {
-  return (value - min) / (max - min)
 }
 
 const computeKeyframes = (

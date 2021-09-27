@@ -18,9 +18,9 @@ const main = () => {
   const near = 0.1
   const far = 100
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
-  camera.position.z = 20
+  camera.position.z = 5
   camera.position.x = 0
-  camera.position.y = 5
+  camera.position.y = 1
   camera.lookAt(new THREE.Vector3(0, 0, 0))
 
   // Create 1 explosion
@@ -43,11 +43,11 @@ const main = () => {
     {
       target: explosion.material.uniforms.u_radius,
       key: "value",
-      initialValue: 1,
+      initialValue: 0.1,
       keyframes: [
         {
           duration: 1000,
-          value: 4,
+          value: 0.6,
           easing: Easing.easeOutExpo,
         },
       ],
@@ -59,7 +59,7 @@ const main = () => {
       keyframes: [
         {
           duration: 1000,
-          value: 2,
+          value: 1.2,
           easing: Easing.easeOutExpo,
         },
       ],
@@ -85,7 +85,7 @@ const main = () => {
         {
           delay: 200,
           duration: 1000,
-          value: 0.15,
+          value: 0.1,
           easing: Easing.linear,
         },
       ],
@@ -98,14 +98,14 @@ const main = () => {
         {
           delay: 200,
           duration: 1000,
-          value: 0.8,
+          value: 0.9,
           easing: Easing.linear,
         },
       ],
     },
   ])
 
-  explosionTimeline.seek(10)
+  explosionTimeline.seek(800)
 
   // Setup pane config
   explosionPane(explosion.material, explosionTimeline)
