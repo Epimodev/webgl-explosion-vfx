@@ -28,12 +28,12 @@ const main = () => {
 
   // Create 1 explosion
   const explosion = createExplosion()
-  scene.add(explosion)
-  explosion.scale.y = 1.5
+  // scene.add(explosion.fireSmoke)
+  scene.add(explosion.sparkles)
 
   const explosionTimeline = new Timeline([
     {
-      target: explosion.material.uniforms.u_circleOffset,
+      target: explosion.fireSmoke.material.uniforms.u_circleOffset,
       key: "value",
       initialValue: 1.0,
       keyframes: [
@@ -45,7 +45,7 @@ const main = () => {
       ],
     },
     {
-      target: explosion.material.uniforms.u_radius,
+      target: explosion.fireSmoke.material.uniforms.u_radius,
       key: "value",
       initialValue: 0.1,
       keyframes: [
@@ -57,7 +57,7 @@ const main = () => {
       ],
     },
     {
-      target: explosion.material.uniforms.u_particuleScale,
+      target: explosion.fireSmoke.material.uniforms.u_particuleScale,
       key: "value",
       initialValue: 0.3,
       keyframes: [
@@ -69,7 +69,7 @@ const main = () => {
       ],
     },
     {
-      target: explosion.material.uniforms.u_circleAmplitude,
+      target: explosion.fireSmoke.material.uniforms.u_circleAmplitude,
       key: "value",
       initialValue: 0.15,
       keyframes: [
@@ -82,7 +82,7 @@ const main = () => {
       ],
     },
     {
-      target: explosion.material.uniforms.u_height,
+      target: explosion.fireSmoke.material.uniforms.u_height,
       key: "value",
       initialValue: 0,
       keyframes: [
@@ -95,7 +95,7 @@ const main = () => {
       ],
     },
     {
-      target: explosion.scale,
+      target: explosion.fireSmoke.scale,
       key: "y",
       initialValue: 1,
       keyframes: [
@@ -108,7 +108,7 @@ const main = () => {
       ],
     },
     {
-      target: explosion.material.uniforms.u_alphaAmplitude,
+      target: explosion.fireSmoke.material.uniforms.u_alphaAmplitude,
       key: "value",
       initialValue: 0.1,
       keyframes: [
@@ -120,9 +120,58 @@ const main = () => {
         },
       ],
     },
+    {
+      target: explosion.sparkles.material.uniforms.u_sparkleScale,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 0,
+          duration: 500,
+          value: 1,
+          easing: Easing.linear,
+        },
+        {
+          duration: 1000,
+          value: 0,
+          easing: Easing.linear,
+        },
+      ],
+    },
+    {
+      target: explosion.sparkles.material.uniforms.u_sparkleHeight,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 0,
+          duration: 500,
+          value: 1,
+          easing: Easing.easeOutQuad,
+        },
+        {
+          duration: 1000,
+          value: 0.3,
+          easing: Easing.easeInQuad,
+        },
+      ],
+    },
+    {
+      target: explosion.sparkles.material.uniforms.u_sparkleRadius,
+      key: "value",
+      initialValue: 0.5,
+      keyframes: [
+        {
+          delay: 0,
+          duration: 1500,
+          value: 2,
+          easing: Easing.linear,
+        },
+      ],
+    },
   ])
 
-  explosionTimeline.seek(800)
+  explosionTimeline.seek(0)
 
   // Setup pane config
   explosionPane(explosion, explosionTimeline)
@@ -135,7 +184,7 @@ const main = () => {
     camera,
     onTick: () => {
       const elapsedTime = clock.getElapsedTime()
-      explosion.material.uniforms.u_time.value = elapsedTime / 10
+      explosion.fireSmoke.material.uniforms.u_time.value = elapsedTime / 10
     },
   })
 }
@@ -187,7 +236,7 @@ const createPlayground = ({
     bloomThreshold,
   )
   effectComposer.addPass(renderPass)
-  effectComposer.addPass(bloomPass)
+  // effectComposer.addPass(bloomPass)
 
   // Controls
   const controls = new OrbitControls(camera, canvas)

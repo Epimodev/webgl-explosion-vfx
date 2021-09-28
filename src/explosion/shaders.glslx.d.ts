@@ -1,5 +1,7 @@
 declare const shaders: {
-  readonly vertex: string
-  readonly fragment: string
+  readonly fireCloudVertex: string
+  readonly fireCloudfragment: string
+  readonly sparklesVertex: string
+  readonly sparklesFragment: string
 }
 export = shaders

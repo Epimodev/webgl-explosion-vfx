@@ -1,6 +1,11 @@
 import * as THREE from "three"
 import { lerp } from "../math"
-import { fragment, vertex } from "./shaders.glslx"
+import {
+  fireCloudfragment,
+  fireCloudVertex,
+  sparklesFragment,
+  sparklesVertex,
+} from "./shaders.glslx"
 
 // Create semi icosphere exported from Blender
 class SemiIcosphere extends THREE.BufferGeometry {
@@ -56,16 +61,37 @@ class SemiIcosphere extends THREE.BufferGeometry {
   }
 }
 
-export const createExplosion = (): THREE.Points<
-  THREE.BufferGeometry,
-  THREE.RawShaderMaterial
-> => {
-  const geometry = new SemiIcosphere()
-  const material = new THREE.RawShaderMaterial({
+class RandomSparkles extends THREE.BufferGeometry {
+  constructor(nbSparkles: number) {
+    super()
+
+    const positions: number[] = []
+    for (let i = 0; i < nbSparkles; i += 1) {
+      const radius = lerp(0.5, 1, Math.random())
+      const angle = lerp(0, 2 * Math.PI, Math.random())
+      const x = radius * Math.cos(angle)
+      const y = lerp(0.5, 1.5, Math.random()) // used for sparkles max height
+      const z = -radius * Math.sin(angle)
+      positions.push(x, y, z)
+    }
+
+    this.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3),
+    )
+  }
+}
+
+export const createExplosion = (): {
+  fireSmoke: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
+  sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
+} => {
+  const fireSmokeGeometry = new SemiIcosphere()
+  const fireSmokeMaterial = new THREE.RawShaderMaterial({
     transparent: true,
     depthWrite: false,
-    vertexShader: vertex,
-    fragmentShader: fragment,
+    vertexShader: fireCloudVertex,
+    fragmentShader: fireCloudfragment,
     uniforms: {
       u_radius: { value: 1.0 },
       u_particuleScale: { value: 1.0 },
@@ -86,8 +112,21 @@ export const createExplosion = (): THREE.Points<
     },
   })
 
-  const points = new THREE.Points(geometry, material)
-  points.scale.y = 0.7
+  const sparklesGeometry = new RandomSparkles(10)
+  const sparklesMaterial = new THREE.RawShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    vertexShader: sparklesVertex,
+    fragmentShader: sparklesFragment,
+    uniforms: {
+      u_sparkleHeight: { value: 0 },
+      u_sparkleScale: { value: 0.5 },
+      u_sparkleRadius: { value: 1 },
+    },
+  })
 
-  return points
+  return {
+    fireSmoke: new THREE.Points(fireSmokeGeometry, fireSmokeMaterial),
+    sparkles: new THREE.Points(sparklesGeometry, sparklesMaterial),
+  }
 }

@@ -8,9 +8,10 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
+
+// fire smoke uniforms
 uniform float u_radius;
 uniform float u_particuleScale;
-
 uniform float u_time;
 uniform float u_height;
 uniform float u_speed;
@@ -25,6 +26,11 @@ uniform vec3 u_c1;
 uniform vec3 u_c2;
 uniform vec3 u_c3;
 uniform vec3 u_c4;
+
+// sparkles uniforms
+uniform float u_sparkleHeight;
+uniform float u_sparkleScale;
+uniform float u_sparkleRadius;
 
 varying float v_radiusCoef;
 
@@ -44,7 +50,7 @@ float quadraticCircle(vec2 coordinate) {
   return 1.0 - quadraticDistance;
 }
 
-export void vertex() {
+export void fireCloudVertex() {
   vec3 particulePosition = position * u_radius * (1.0 + radiusCoef);
   particulePosition.y += u_height;
   vec4 vertexPosition = modelMatrix * vec4(particulePosition, 1.0);
@@ -57,7 +63,7 @@ export void vertex() {
   v_radiusCoef = 1.0 + radiusCoef;
 }
 
-export void fragment() {
+export void fireCloudfragment() {
   vec2 uv = gl_PointCoord;
   // using v_radiusCoef in noiseFac gives to each particule a different noise
   float noiseFac = snoiseFractal(vec3(uv * u_noiseScale, v_radiusCoef * u_time * u_speed));
@@ -70,4 +76,22 @@ export void fragment() {
   vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, intensity);
 
   gl_FragColor = vec4(color, alpha);
+}
+
+export void sparklesVertex() {
+  vec3 particulePosition = position;
+  particulePosition.xz *= u_sparkleRadius;
+  particulePosition.y *= u_sparkleHeight;
+  vec4 vertexPosition = modelMatrix * vec4(particulePosition, 1.0);
+  vec4 viewPosition = viewMatrix * vertexPosition;
+
+  gl_Position = projectionMatrix * viewPosition;
+  gl_PointSize = 100.0 * u_sparkleScale;
+  gl_PointSize /= -viewPosition.z;
+}
+
+export void sparklesFragment() {
+  vec3 color = vec3(0.0);
+
+  gl_FragColor = vec4(color, 1.0);
 }
