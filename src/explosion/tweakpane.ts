@@ -191,4 +191,20 @@ export const explosionPane = (
     max: 2,
     step: 0.01,
   })
+  // colors
+  const sparklesColors = {
+    c1: `#${sparklesMaterial.uniforms.u_c1.value.getHexString()}`,
+    c2: `#${sparklesMaterial.uniforms.u_c2.value.getHexString()}`,
+  }
+  tabs.pages[1]
+    .addInput(sparklesColors, "c1", {
+      label: "color 1",
+    })
+    .on("change", handleColorChange(sparklesMaterial.uniforms.u_c1.value))
+  tabs.pages[1]
+    .addInput(sparklesColors, "c2", {
+      label: "color 2",
+      view: "color",
+    })
+    .on("change", handleColorChange(sparklesMaterial.uniforms.u_c2.value))
 }

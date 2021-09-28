@@ -28,7 +28,7 @@ const main = () => {
 
   // Create 1 explosion
   const explosion = createExplosion()
-  // scene.add(explosion.fireSmoke)
+  scene.add(explosion.fireSmoke)
   scene.add(explosion.sparkles)
 
   const explosionTimeline = new Timeline([
@@ -126,7 +126,11 @@ const main = () => {
       initialValue: 0,
       keyframes: [
         {
-          delay: 0,
+          duration: 50,
+          value: 0.75,
+          easing: Easing.linear,
+        },
+        {
           duration: 500,
           value: 1,
           easing: Easing.linear,
@@ -164,14 +168,14 @@ const main = () => {
         {
           delay: 0,
           duration: 1500,
-          value: 2,
+          value: 3,
           easing: Easing.linear,
         },
       ],
     },
   ])
 
-  explosionTimeline.seek(0)
+  explosionTimeline.seek(500)
 
   // Setup pane config
   explosionPane(explosion, explosionTimeline)
@@ -236,7 +240,7 @@ const createPlayground = ({
     bloomThreshold,
   )
   effectComposer.addPass(renderPass)
-  // effectComposer.addPass(bloomPass)
+  effectComposer.addPass(bloomPass)
 
   // Controls
   const controls = new OrbitControls(camera, canvas)
