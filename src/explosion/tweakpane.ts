@@ -2,9 +2,11 @@ import * as Tweakpan from "tweakpane"
 import type { Timeline } from "../animation"
 
 export const explosionPane = (
-  material: THREE.RawShaderMaterial,
+  points: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>,
   timeline: Timeline,
 ): void => {
+  const { material } = points
+
   const params = {
     timelineTimestamp: 0,
   }
@@ -34,7 +36,12 @@ export const explosionPane = (
 
   pane.addSeparator()
 
-  // Explosion effect
+  pane.addInput(points.scale, "y", {
+    label: "scale y",
+    min: 0,
+    max: 3,
+    step: 0.01,
+  })
   pane.addInput(material.uniforms.u_height, "value", {
     label: "height",
     min: 0,

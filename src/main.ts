@@ -29,6 +29,7 @@ const main = () => {
   // Create 1 explosion
   const explosion = createExplosion()
   scene.add(explosion)
+  explosion.scale.y = 1.5
 
   const explosionTimeline = new Timeline([
     {
@@ -74,7 +75,7 @@ const main = () => {
       keyframes: [
         {
           delay: 50,
-          duration: 1000,
+          duration: 2000,
           value: 0.85,
           easing: Easing.easeOutExpo,
         },
@@ -89,6 +90,19 @@ const main = () => {
           delay: 100,
           duration: 20000,
           value: 2,
+          easing: Easing.easeOutQuad,
+        },
+      ],
+    },
+    {
+      target: explosion.scale,
+      key: "y",
+      initialValue: 1,
+      keyframes: [
+        {
+          delay: 100,
+          duration: 10000,
+          value: 1.6,
           easing: Easing.easeOutQuad,
         },
       ],
@@ -111,7 +125,7 @@ const main = () => {
   explosionTimeline.seek(800)
 
   // Setup pane config
-  explosionPane(explosion.material, explosionTimeline)
+  explosionPane(explosion, explosionTimeline)
 
   const clock = new THREE.Clock()
   clock.start()
