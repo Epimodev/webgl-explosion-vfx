@@ -1,4 +1,6 @@
 import * as THREE from "three"
+import { Timeline } from "../animation"
+import * as Easing from "../animation/easing"
 import { lerp } from "../math"
 import {
   fireCloudfragment,
@@ -85,6 +87,7 @@ class RandomSparkles extends THREE.BufferGeometry {
 export const createExplosion = (): {
   fireSmoke: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
   sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
+  timeline: Timeline
 } => {
   const fireSmokeGeometry = new SemiIcosphere()
   const fireSmokeMaterial = new THREE.RawShaderMaterial({
@@ -128,8 +131,152 @@ export const createExplosion = (): {
     },
   })
 
+  const fireSmoke = new THREE.Points(fireSmokeGeometry, fireSmokeMaterial)
+  const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
+
+  const timeline = new Timeline([
+    {
+      target: fireSmokeMaterial.uniforms.u_circleOffset,
+      key: "value",
+      initialValue: 1.0,
+      keyframes: [
+        {
+          duration: 10,
+          value: 0.7,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: fireSmokeMaterial.uniforms.u_radius,
+      key: "value",
+      initialValue: 0.1,
+      keyframes: [
+        {
+          duration: 1000,
+          value: 0.6,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: fireSmokeMaterial.uniforms.u_particuleScale,
+      key: "value",
+      initialValue: 0.3,
+      keyframes: [
+        {
+          duration: 1000,
+          value: 1.2,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: fireSmokeMaterial.uniforms.u_circleAmplitude,
+      key: "value",
+      initialValue: 0.15,
+      keyframes: [
+        {
+          delay: 50,
+          duration: 2000,
+          value: 0.85,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: fireSmokeMaterial.uniforms.u_height,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 100,
+          duration: 20000,
+          value: 2,
+          easing: Easing.easeOutQuad,
+        },
+      ],
+    },
+    {
+      target: fireSmoke.scale,
+      key: "y",
+      initialValue: 1,
+      keyframes: [
+        {
+          delay: 100,
+          duration: 10000,
+          value: 1.6,
+          easing: Easing.easeOutQuad,
+        },
+      ],
+    },
+    {
+      target: fireSmokeMaterial.uniforms.u_alphaAmplitude,
+      key: "value",
+      initialValue: 0.1,
+      keyframes: [
+        {
+          delay: 500,
+          duration: 20000,
+          value: 0.75,
+          easing: Easing.easeOutQuad,
+        },
+      ],
+    },
+    {
+      target: sparklesMaterial.uniforms.u_sparkleScale,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          duration: 50,
+          value: 1,
+          easing: Easing.linear,
+        },
+        {
+          delay: 500,
+          duration: 1500,
+          value: 0,
+          easing: Easing.linear,
+        },
+      ],
+    },
+    {
+      target: sparklesMaterial.uniforms.u_sparkleHeight,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 0,
+          duration: 500,
+          value: 1.8,
+          easing: Easing.easeOutQuad,
+        },
+        {
+          duration: 1500,
+          value: 1.1,
+          easing: Easing.easeInQuad,
+        },
+      ],
+    },
+    {
+      target: sparklesMaterial.uniforms.u_sparkleRadius,
+      key: "value",
+      initialValue: 0.5,
+      keyframes: [
+        {
+          delay: 0,
+          duration: 1500,
+          value: 2.5,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+  ])
+
   return {
-    fireSmoke: new THREE.Points(fireSmokeGeometry, fireSmokeMaterial),
-    sparkles: new THREE.Points(sparklesGeometry, sparklesMaterial),
+    fireSmoke,
+    sparkles,
+    timeline,
   }
 }

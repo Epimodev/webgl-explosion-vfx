@@ -4,8 +4,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass"
-import { Timeline } from "./animation"
-import * as Easing from "./animation/easing"
 import { createExplosion } from "./explosion"
 import { explosionPane } from "./explosion/tweakpane"
 import "./style.css"
@@ -31,150 +29,10 @@ const main = () => {
   scene.add(explosion.fireSmoke)
   scene.add(explosion.sparkles)
 
-  const explosionTimeline = new Timeline([
-    {
-      target: explosion.fireSmoke.material.uniforms.u_circleOffset,
-      key: "value",
-      initialValue: 1.0,
-      keyframes: [
-        {
-          duration: 10,
-          value: 0.7,
-          easing: Easing.easeOutExpo,
-        },
-      ],
-    },
-    {
-      target: explosion.fireSmoke.material.uniforms.u_radius,
-      key: "value",
-      initialValue: 0.1,
-      keyframes: [
-        {
-          duration: 1000,
-          value: 0.6,
-          easing: Easing.easeOutExpo,
-        },
-      ],
-    },
-    {
-      target: explosion.fireSmoke.material.uniforms.u_particuleScale,
-      key: "value",
-      initialValue: 0.3,
-      keyframes: [
-        {
-          duration: 1000,
-          value: 1.2,
-          easing: Easing.easeOutExpo,
-        },
-      ],
-    },
-    {
-      target: explosion.fireSmoke.material.uniforms.u_circleAmplitude,
-      key: "value",
-      initialValue: 0.15,
-      keyframes: [
-        {
-          delay: 50,
-          duration: 2000,
-          value: 0.85,
-          easing: Easing.easeOutExpo,
-        },
-      ],
-    },
-    {
-      target: explosion.fireSmoke.material.uniforms.u_height,
-      key: "value",
-      initialValue: 0,
-      keyframes: [
-        {
-          delay: 100,
-          duration: 20000,
-          value: 2,
-          easing: Easing.easeOutQuad,
-        },
-      ],
-    },
-    {
-      target: explosion.fireSmoke.scale,
-      key: "y",
-      initialValue: 1,
-      keyframes: [
-        {
-          delay: 100,
-          duration: 10000,
-          value: 1.6,
-          easing: Easing.easeOutQuad,
-        },
-      ],
-    },
-    {
-      target: explosion.fireSmoke.material.uniforms.u_alphaAmplitude,
-      key: "value",
-      initialValue: 0.1,
-      keyframes: [
-        {
-          delay: 500,
-          duration: 20000,
-          value: 0.75,
-          easing: Easing.easeOutQuad,
-        },
-      ],
-    },
-    {
-      target: explosion.sparkles.material.uniforms.u_sparkleScale,
-      key: "value",
-      initialValue: 0,
-      keyframes: [
-        {
-          duration: 50,
-          value: 1,
-          easing: Easing.linear,
-        },
-        {
-          delay: 500,
-          duration: 1500,
-          value: 0,
-          easing: Easing.linear,
-        },
-      ],
-    },
-    {
-      target: explosion.sparkles.material.uniforms.u_sparkleHeight,
-      key: "value",
-      initialValue: 0,
-      keyframes: [
-        {
-          delay: 0,
-          duration: 500,
-          value: 1.8,
-          easing: Easing.easeOutQuad,
-        },
-        {
-          duration: 1500,
-          value: 1.1,
-          easing: Easing.easeInQuad,
-        },
-      ],
-    },
-    {
-      target: explosion.sparkles.material.uniforms.u_sparkleRadius,
-      key: "value",
-      initialValue: 0.5,
-      keyframes: [
-        {
-          delay: 0,
-          duration: 1500,
-          value: 2.5,
-          easing: Easing.easeOutExpo,
-        },
-      ],
-    },
-  ])
-
-  explosionTimeline.seek(500)
+  explosion.timeline.seek(500)
 
   // Setup pane config
-  explosionPane(explosion, explosionTimeline)
+  explosionPane(explosion, explosion.timeline)
 
   const clock = new THREE.Clock()
   clock.start()
@@ -222,7 +80,7 @@ const createPlayground = ({
     canvas,
     antialias: true,
   })
-  // renderer.setClearColor(0xecf0f1)
+  renderer.setClearColor(0xecf0f1)
 
   const effectComposer = new EffectComposer(renderer)
   const renderPass = new RenderPass(scene, camera)
