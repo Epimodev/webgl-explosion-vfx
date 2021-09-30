@@ -49,10 +49,22 @@ const main = () => {
   scene.add(explosion.fireSmoke)
   scene.add(explosion.sparkles)
 
-  explosion.timeline.seek(500)
+  explosion.timeline.seek(0)
 
   // Setup pane config
   explosionPane(explosion, explosion.timeline)
+
+  // Play button
+  const playButton = document.getElementById("play-button")!
+  playButton.addEventListener("click", () => {
+    explosion.timeline.seek(0)
+    explosion.timeline.play()
+
+    playButton.setAttribute("disabled", "")
+    setTimeout(() => {
+      playButton.removeAttribute("disabled")
+    }, 3000)
+  })
 
   const clock = new THREE.Clock()
   clock.start()

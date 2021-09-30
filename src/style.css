@@ -1,8 +1,38 @@
 body {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
+}
+
+.button {
+  z-index: 1;
+  position: fixed;
+  top: 16px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  height: 40px;
+  width: 200px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  background-color: #e67e22;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  box-shadow: 0 6px 40px rgba(0, 0, 0, 0.2);
+  transition-duration: 300ms;
+}
+.button:hover {
+  background-color: #d35400;
+}
+.button:active {
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+.button:disabled {
+  background-color: #e67e22;
+  opacity: 0.5;
 }
 
 #webgl {

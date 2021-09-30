@@ -141,8 +141,8 @@ const isTimelineCompleted = (
 export class Timeline {
   private frame: number | null
   private variables: ComputedTimelineVariable[]
-  private timestamp: number
   private listeners: (() => void)[]
+  timestamp: number
 
   constructor(variables: TimelineVariable[]) {
     this.frame = null
