@@ -42,7 +42,19 @@ export const createGround = () => {
     normalMap: groundNormals,
     transparent: true,
   })
-  groundMaterial.envMapIntensity = 1
+
+  groundMaterial.onBeforeCompile = shader => {
+    const alphaFragment = `
+    float circle = 1.0 - distance(vUv, vec2(${
+      0.5 * textureRepeat
+    })) / 2.0 + 0.5;
+    diffuseColor.a = smoothstep(0.75, 0.9, circle);`
+    shader.fragmentShader = shader.fragmentShader.replace(
+      "#include <alphamap_fragment>",
+      alphaFragment,
+    )
+  }
+
   const ground = new THREE.Mesh(plane, groundMaterial)
   ground.rotation.x = -Math.PI / 2
   ground.position.y = -0.4
