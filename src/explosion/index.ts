@@ -85,6 +85,7 @@ class RandomSparkles extends THREE.BufferGeometry {
 }
 
 export const createExplosion = (): {
+  light: THREE.PointLight
   fireSmoke: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
   sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
   timeline: Timeline
@@ -131,10 +132,30 @@ export const createExplosion = (): {
     },
   })
 
+  const light = new THREE.PointLight(0xffffff)
+  light.position.set(0, 0.2, 0)
+  light.intensity = 0
   const fireSmoke = new THREE.Points(fireSmokeGeometry, fireSmokeMaterial)
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
 
   const timeline = new Timeline([
+    {
+      target: light,
+      key: "intensity",
+      initialValue: 0,
+      keyframes: [
+        {
+          duration: 50,
+          value: 3,
+          easing: Easing.easeInExpo,
+        },
+        {
+          duration: 500,
+          value: 0,
+          easing: Easing.easeOutQuad,
+        },
+      ],
+    },
     {
       target: fireSmokeMaterial.uniforms.u_circleOffset,
       key: "value",
@@ -275,6 +296,7 @@ export const createExplosion = (): {
   ])
 
   return {
+    light,
     fireSmoke,
     sparkles,
     timeline,

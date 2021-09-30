@@ -4,9 +4,11 @@ import type { Timeline } from "../animation"
 
 export const explosionPane = (
   {
+    light,
     fireSmoke,
     sparkles,
   }: {
+    light: THREE.PointLight
     fireSmoke: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
     sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
   },
@@ -46,6 +48,16 @@ export const explosionPane = (
 
   const tabs = pane.addTab({
     pages: [{ title: "Fire smoke" }, { title: "Sparkles" }],
+  })
+
+  /* ==================== */
+  /* ======= Light ====== */
+  /* ==================== */
+  tabs.pages[0].addInput(light, "intensity", {
+    label: "light",
+    min: 0,
+    max: 5,
+    step: 0.01,
   })
 
   /* ==================== */

@@ -6,6 +6,7 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass"
 import { createExplosion } from "./explosion"
 import { explosionPane } from "./explosion/tweakpane"
+import { createGround } from "./ground"
 import "./style.css"
 
 const MAX_PIXEL_RATIO = 2
@@ -24,8 +25,27 @@ const main = () => {
   camera.position.y = 1
   camera.lookAt(new THREE.Vector3(0, 0, 0))
 
+  // Lights
+  const firstLight = new THREE.PointLight(0xffffff)
+  firstLight.intensity = 4
+  scene.add(firstLight)
+  firstLight.position.x = 3
+  firstLight.position.y = 0.2
+  firstLight.position.z = 1
+  const secondLight = new THREE.PointLight(0xffffff)
+  secondLight.intensity = 4
+  scene.add(secondLight)
+  secondLight.position.x = -1
+  secondLight.position.y = 0.1
+  secondLight.position.z = -3
+
+  // Ground
+  const ground = createGround()
+  scene.add(ground)
+
   // Create 1 explosion
   const explosion = createExplosion()
+  scene.add(explosion.light)
   scene.add(explosion.fireSmoke)
   scene.add(explosion.sparkles)
 
@@ -80,12 +100,15 @@ const createPlayground = ({
     canvas,
     antialias: true,
   })
-  renderer.setClearColor(0xecf0f1)
+  renderer.setClearColor(0x2c3e50)
+  renderer.physicallyCorrectLights = true
+  renderer.toneMapping = THREE.ReinhardToneMapping
+  renderer.toneMappingExposure = 3
 
   const effectComposer = new EffectComposer(renderer)
   const renderPass = new RenderPass(scene, camera)
   const bloomRadius = 0
-  const bloomThreshold = 0
+  const bloomThreshold = 0.65
   const bloomStrength = 0.5
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -103,6 +126,8 @@ const createPlayground = ({
   controls.rotateSpeed = 2
   controls.enablePan = false
   controls.enableZoom = false
+  controls.minPolarAngle = 0
+  controls.maxPolarAngle = Math.PI / 2
 
   const updateSize = () => {
     // Update size
