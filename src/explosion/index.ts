@@ -146,7 +146,7 @@ export const createExplosion = (): {
       keyframes: [
         {
           duration: 50,
-          value: 3,
+          value: 4,
           easing: Easing.easeInExpo,
         },
         {
@@ -232,6 +232,19 @@ export const createExplosion = (): {
       ],
     },
     {
+      target: fireSmokeMaterial.uniforms.u_alphaOffset,
+      key: "value",
+      initialValue: 0.15,
+      keyframes: [
+        {
+          delay: 5000,
+          duration: 5000,
+          value: 0.3,
+          easing: Easing.linear,
+        },
+      ],
+    },
+    {
       target: fireSmokeMaterial.uniforms.u_alphaAmplitude,
       key: "value",
       initialValue: 0.1,
@@ -239,7 +252,7 @@ export const createExplosion = (): {
         {
           delay: 500,
           duration: 20000,
-          value: 0.75,
+          value: 2,
           easing: Easing.easeOutQuad,
         },
       ],
@@ -288,7 +301,7 @@ export const createExplosion = (): {
         {
           delay: 0,
           duration: 1500,
-          value: 2.5,
+          value: 2,
           easing: Easing.easeOutExpo,
         },
       ],

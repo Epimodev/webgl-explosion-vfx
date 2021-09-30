@@ -144,7 +144,7 @@ export const explosionPane = (
   tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_alphaAmplitude, "value", {
     label: "alpha amplitude",
     min: 0,
-    max: 1,
+    max: 2,
     step: 0.01,
   })
 
