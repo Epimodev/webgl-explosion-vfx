@@ -176,7 +176,7 @@ export const explosionPane = (
   tabs.pages[1].addInput(sparklesMaterial.uniforms.u_sparkleHeight, "value", {
     label: "height",
     min: 0,
-    max: 1,
+    max: 5,
     step: 0.01,
   })
   tabs.pages[1].addInput(sparklesMaterial.uniforms.u_sparkleScale, "value", {
@@ -187,10 +187,20 @@ export const explosionPane = (
   })
   tabs.pages[1].addInput(sparklesMaterial.uniforms.u_sparkleRadius, "value", {
     label: "radius",
-    min: 1,
+    min: 0,
     max: 2,
     step: 0.01,
   })
+  tabs.pages[1].addInput(
+    sparklesMaterial.uniforms.u_sparkleIntensity,
+    "value",
+    {
+      label: "intensity",
+      min: 0,
+      max: 10,
+      step: 0.01,
+    },
+  )
   // colors
   const sparklesColors = {
     c1: `#${sparklesMaterial.uniforms.u_c1.value.getHexString()}`,

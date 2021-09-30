@@ -127,16 +127,12 @@ const main = () => {
       keyframes: [
         {
           duration: 50,
-          value: 0.75,
-          easing: Easing.linear,
-        },
-        {
-          duration: 500,
           value: 1,
           easing: Easing.linear,
         },
         {
-          duration: 1000,
+          delay: 500,
+          duration: 1500,
           value: 0,
           easing: Easing.linear,
         },
@@ -150,12 +146,12 @@ const main = () => {
         {
           delay: 0,
           duration: 500,
-          value: 1,
+          value: 1.8,
           easing: Easing.easeOutQuad,
         },
         {
-          duration: 1000,
-          value: 0.3,
+          duration: 1500,
+          value: 1.1,
           easing: Easing.easeInQuad,
         },
       ],
@@ -168,8 +164,8 @@ const main = () => {
         {
           delay: 0,
           duration: 1500,
-          value: 3,
-          easing: Easing.linear,
+          value: 2.5,
+          easing: Easing.easeOutExpo,
         },
       ],
     },
@@ -226,7 +222,7 @@ const createPlayground = ({
     canvas,
     antialias: true,
   })
-  renderer.setClearColor(0xecf0f1)
+  // renderer.setClearColor(0xecf0f1)
 
   const effectComposer = new EffectComposer(renderer)
   const renderPass = new RenderPass(scene, camera)

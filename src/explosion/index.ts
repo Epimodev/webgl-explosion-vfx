@@ -112,7 +112,7 @@ export const createExplosion = (): {
     },
   })
 
-  const sparklesGeometry = new RandomSparkles(10)
+  const sparklesGeometry = new RandomSparkles(15)
   const sparklesMaterial = new THREE.RawShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -122,6 +122,7 @@ export const createExplosion = (): {
       u_sparkleHeight: { value: 0 },
       u_sparkleScale: { value: 0.5 },
       u_sparkleRadius: { value: 1 },
+      u_sparkleIntensity: { value: 1 },
       u_c1: { value: new THREE.Color(0xff8800) },
       u_c2: { value: new THREE.Color(0xffff88) },
     },

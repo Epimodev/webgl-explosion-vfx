@@ -31,6 +31,7 @@ uniform vec3 u_c4;
 uniform float u_sparkleHeight;
 uniform float u_sparkleScale;
 uniform float u_sparkleRadius;
+uniform float u_sparkleIntensity;
 
 varying float v_radiusCoef;
 
@@ -42,6 +43,11 @@ vec3 colorRamp(vec3 color1, vec3 color2, vec3 color3, vec3 color4, float value) 
   color = mix(color, color3, smoothstep(0.3, 0.6, value));
   color = mix(color, color4, smoothstep(0.6, 1.0, value));
   return color;
+}
+
+float linearCircle(vec2 coordinate) {
+  float centerDistance = distance(coordinate, vec2(0.5));
+  return 1.0 - centerDistance;
 }
 
 float quadraticCircle(vec2 coordinate) {
@@ -86,16 +92,18 @@ export void sparklesVertex() {
   vec4 viewPosition = viewMatrix * vertexPosition;
 
   gl_Position = projectionMatrix * viewPosition;
-  gl_PointSize = 100.0 * u_sparkleScale;
+  gl_PointSize = 600.0 * u_sparkleScale;
   gl_PointSize /= -viewPosition.z;
 }
 
 export void sparklesFragment() {
   vec2 uv = gl_PointCoord;
-  float circle = quadraticCircle(uv);
-  circle = invLerp(0.75, 1.0, circle);
-  float alpha = step(0.0, circle);;
-  vec3 color = mix(u_c1, u_c2, smoothstep(0.9, 1.0, circle));
+  float circle = linearCircle(uv);
+  float haloCircle = u_sparkleIntensity * clamp(invLerp(0.5, 10.0, circle), 0.0, 1.0);
+  float lightCircle = smoothstep(0.92, 0.97, circle);
+
+  float alpha = lightCircle + haloCircle;
+  vec3 color = mix(u_c1, u_c2, smoothstep(0.8, 1.0, circle));
 
   gl_FragColor = vec4(color, alpha);
 }
