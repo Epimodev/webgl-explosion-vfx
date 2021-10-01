@@ -3,66 +3,50 @@ import { Timeline } from "../animation"
 import * as Easing from "../animation/easing"
 import { lerp } from "../math"
 import {
-  fireCloudfragment,
-  fireCloudVertex,
   fireSmokeFragment,
   fireSmokeVertex,
   sparklesFragment,
   sparklesVertex,
 } from "./shaders.glslx"
 
-// Create semi icosphere exported from Blender
-class SemiIcosphere extends THREE.BufferGeometry {
-  constructor() {
-    super()
+export type Explosion = {
+  light: THREE.PointLight
+  fireSmokeMaterial: THREE.RawShaderMaterial
+  fireSmoke: THREE.Group
+  sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
+  timeline: Timeline
+}
 
-    // prettier-ignore
-    const positions = [
-      0.276388, 0.44722, 0.850649,
-      -0.723607, 0.44722, 0.525725,
-      -0.723607, 0.44722, -0.525725,
-      0.276388, 0.44722, -0.850649,
-      0.894426, 0.447216, 0.0,
-      0.0, 1.0, 0.0,
-      0.951058, 0.0, 0.309013,
-      0.951058, 0.0, -0.309013,
-      0.0, 0.0, 1.0,
-      0.587786, 0.0, 0.809017,
-      -0.951058, 0.0, 0.309013,
-      -0.587786, 0.0, 0.809017,
-      -0.587786, 0.0, -0.809017,
-      -0.951058, 0.0, -0.309013,
-      0.587786, 0.0, -0.809017,
-      0.0, 0.0, -1.0,
-      0.688189, 0.525736, 0.499997,
-      -0.262869, 0.525738, 0.809012,
-      -0.850648, 0.525736, 0.0,
-      -0.262869, 0.525738, -0.809012,
-      0.688189, 0.525736, -0.499997,
-      0.162456, 0.850654, 0.499995,
-      0.52573, 0.850652, 0.0,
-      -0.425323, 0.850654, 0.309011,
-      -0.425323, 0.850654, -0.309011,
-      0.162456, 0.850654, -0.499995,
-    ]
-
-    const radiusCoef: number[] = []
-    const sizeCoef: number[] = []
-    for (let i = 0, l = positions.length; i < l; i += 3) {
-      radiusCoef.push(Math.random())
-      sizeCoef.push(lerp(0.5, 1, Math.random()))
-    }
-
-    this.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(positions, 3),
-    )
-    this.setAttribute(
-      "radiusCoef",
-      new THREE.Float32BufferAttribute(radiusCoef, 1),
-    )
-    this.setAttribute("sizeCoef", new THREE.Float32BufferAttribute(sizeCoef, 1))
-  }
+// semi icosphere points exported from Blender
+const icospherePoints = (): THREE.Vector3[] => {
+  return [
+    new THREE.Vector3(0.276388, 0.44722, 0.850649),
+    new THREE.Vector3(-0.723607, 0.44722, 0.525725),
+    new THREE.Vector3(-0.723607, 0.44722, -0.525725),
+    new THREE.Vector3(0.276388, 0.44722, -0.850649),
+    new THREE.Vector3(0.894426, 0.447216, 0.0),
+    new THREE.Vector3(0.0, 1.0, 0.0),
+    new THREE.Vector3(0.951058, 0.0, 0.309013),
+    new THREE.Vector3(0.951058, 0.0, -0.309013),
+    new THREE.Vector3(0.0, 0.0, 1.0),
+    new THREE.Vector3(0.587786, 0.0, 0.809017),
+    new THREE.Vector3(-0.951058, 0.0, 0.309013),
+    new THREE.Vector3(-0.587786, 0.0, 0.809017),
+    new THREE.Vector3(-0.587786, 0.0, -0.809017),
+    new THREE.Vector3(-0.951058, 0.0, -0.309013),
+    new THREE.Vector3(0.587786, 0.0, -0.809017),
+    new THREE.Vector3(0.0, 0.0, -1.0),
+    new THREE.Vector3(0.688189, 0.525736, 0.499997),
+    new THREE.Vector3(-0.262869, 0.525738, 0.809012),
+    new THREE.Vector3(-0.850648, 0.525736, 0.0),
+    new THREE.Vector3(-0.262869, 0.525738, -0.809012),
+    new THREE.Vector3(0.688189, 0.525736, -0.499997),
+    new THREE.Vector3(0.162456, 0.850654, 0.499995),
+    new THREE.Vector3(0.52573, 0.850652, 0.0),
+    new THREE.Vector3(-0.425323, 0.850654, 0.309011),
+    new THREE.Vector3(-0.425323, 0.850654, -0.309011),
+    new THREE.Vector3(0.162456, 0.850654, -0.499995),
+  ]
 }
 
 class RandomSparkles extends THREE.BufferGeometry {
@@ -86,8 +70,26 @@ class RandomSparkles extends THREE.BufferGeometry {
   }
 }
 
-export const fireSmokeMaterial = (): THREE.RawShaderMaterial => {
-  return new THREE.RawShaderMaterial({
+const createFireSmokeParticules = (
+  material: THREE.RawShaderMaterial,
+): THREE.Group => {
+  const group = new THREE.Group()
+  const points = icospherePoints()
+  const geometry = new THREE.PlaneGeometry(1, 1)
+
+  for (const point of points) {
+    const mesh = new THREE.Mesh(geometry, material)
+    const scale = lerp(0.5, 1, Math.random())
+    mesh.position.set(point.x, point.y, point.z)
+    mesh.scale.set(scale, scale, scale)
+    group.add(mesh)
+  }
+
+  return group
+}
+
+export const createExplosion = (): Explosion => {
+  const fireSmokeMaterial = new THREE.RawShaderMaterial({
     transparent: true,
     depthWrite: false,
     vertexShader: fireSmokeVertex,
@@ -98,51 +100,6 @@ export const fireSmokeMaterial = (): THREE.RawShaderMaterial => {
       u_radius: { value: 1.0 },
       u_particuleScale: { value: 1.0 },
       u_height: { value: 0.0 },
-      u_noiseScale: { value: 4 },
-      u_circleOffset: { value: 0.7 },
-      u_circleAmplitude: { value: 0.2 },
-      u_intensityOffset: { value: 0.39 },
-      u_intensityAmplitude: { value: 0.3 },
-      u_alphaOffset: { value: 0.15 },
-      u_alphaAmplitude: { value: 0.1 },
-      u_c1: { value: new THREE.Color(0x000000) },
-      u_c2: { value: new THREE.Color(0xff0000) },
-      u_c3: { value: new THREE.Color(0xff8800) },
-      u_c4: { value: new THREE.Color(0xffff88) },
-    },
-  })
-}
-
-export const fireSmokeParticule = (
-  material: THREE.RawShaderMaterial,
-  position: THREE.Vector3,
-  scale: number,
-): THREE.Mesh => {
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material)
-  mesh.position.set(position.x, position.y, position.z)
-  mesh.scale.set(scale, scale, 1)
-
-  return mesh
-}
-
-export const createExplosion = (): {
-  light: THREE.PointLight
-  fireSmoke: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
-  sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
-  timeline: Timeline
-} => {
-  const fireSmokeGeometry = new SemiIcosphere()
-  const fireSmokeMaterial = new THREE.RawShaderMaterial({
-    transparent: true,
-    depthWrite: false,
-    vertexShader: fireCloudVertex,
-    fragmentShader: fireCloudfragment,
-    uniforms: {
-      u_radius: { value: 1.0 },
-      u_particuleScale: { value: 1.0 },
-      u_time: { value: 0 },
-      u_height: { value: 0.0 },
-      u_speed: { value: 2 },
       u_noiseScale: { value: 4 },
       u_circleOffset: { value: 0.7 },
       u_circleAmplitude: { value: 0.2 },
@@ -176,7 +133,7 @@ export const createExplosion = (): {
   const light = new THREE.PointLight(0xffffff)
   light.position.set(0, 0.2, 0)
   light.intensity = 0
-  const fireSmoke = new THREE.Points(fireSmokeGeometry, fireSmokeMaterial)
+  const fireSmoke = createFireSmokeParticules(fireSmokeMaterial)
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
 
   const timeline = new Timeline([
@@ -224,11 +181,11 @@ export const createExplosion = (): {
     {
       target: fireSmokeMaterial.uniforms.u_particuleScale,
       key: "value",
-      initialValue: 0.3,
+      initialValue: 0.1,
       keyframes: [
         {
           duration: 1000,
-          value: 1.2,
+          value: 1.8,
           easing: Easing.easeOutExpo,
         },
       ],
@@ -252,10 +209,14 @@ export const createExplosion = (): {
       initialValue: 0,
       keyframes: [
         {
-          delay: 100,
-          duration: 20000,
-          value: 2,
+          duration: 700,
+          value: 0.3,
           easing: Easing.easeOutQuad,
+        },
+        {
+          duration: 6000,
+          value: 2,
+          easing: Easing.easeInQuad,
         },
       ],
     },
@@ -351,6 +312,7 @@ export const createExplosion = (): {
 
   return {
     light,
+    fireSmokeMaterial,
     fireSmoke,
     sparkles,
     timeline,

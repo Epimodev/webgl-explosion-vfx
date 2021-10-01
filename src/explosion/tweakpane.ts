@@ -1,20 +1,12 @@
 import * as THREE from "three"
 import * as Tweakpan from "tweakpane"
 import type { Timeline } from "../animation"
+import type { Explosion } from "./"
 
 export const explosionPane = (
-  {
-    light,
-    fireSmoke,
-    sparkles,
-  }: {
-    light: THREE.PointLight
-    fireSmoke: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
-    sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
-  },
+  { light, fireSmokeMaterial, fireSmoke, sparkles }: Explosion,
   timeline: Timeline,
 ): void => {
-  const { material: fireSmokeMaterial } = fireSmoke
   const { material: sparklesMaterial } = sparkles
 
   const params = {

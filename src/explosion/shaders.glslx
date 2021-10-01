@@ -2,14 +2,11 @@ precision highp float;
 
 attribute vec3 position;
 attribute vec2 uv;
-attribute float radiusCoef;
-attribute float sizeCoef;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform vec3 cameraPosition;
-
 
 // fire smoke uniforms
 uniform float u_radius;
@@ -84,41 +81,13 @@ export void fireSmokeVertex() {
   gl_Position = projectionMatrix * viewMatrix * rotation * transformedModelMatrix * vec4(position, 1.0);
 
   v_uv = uv;
-  v_position = modelPosition;
+  v_position = getPosition(modelMatrix);
 }
 
 export void fireSmokeFragment() {
-  float noiseFac = snoiseFractal(vec3(v_uv * u_noiseScale, v_position.x * u_time * u_speed));
+  float noiseFac = snoiseFractal(vec3(v_uv * u_noiseScale, v_position.x + u_time * u_speed));
   noiseFac = invLerp(-1.5, 0.4, noiseFac);
   float circle = quadraticCircle(v_uv);
-  circle = invLerp(u_circleOffset, u_circleOffset + u_circleAmplitude, circle);
-  float shape = circle * noiseFac;
-  float intensity = invLerp(u_intensityOffset, u_intensityOffset + u_intensityAmplitude, shape);
-  float alpha = invLerp(u_alphaOffset, u_alphaOffset + u_alphaAmplitude, shape);
-  vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, intensity);
-
-  gl_FragColor = vec4(color, alpha);
-}
-
-export void fireCloudVertex() {
-  vec3 particulePosition = position * u_radius * (1.0 + radiusCoef);
-  particulePosition.y += u_height;
-  vec4 vertexPosition = modelMatrix * vec4(particulePosition, 1.0);
-  vec4 viewPosition = viewMatrix * vertexPosition;
-
-  gl_Position = projectionMatrix * viewPosition;
-  gl_PointSize = 1000.0 * u_particuleScale * sizeCoef;
-  gl_PointSize /= -viewPosition.z;
-
-  v_radiusCoef = 1.0 + radiusCoef;
-}
-
-export void fireCloudfragment() {
-  vec2 uv = gl_PointCoord;
-  // using v_radiusCoef in noiseFac gives to each particule a different noise
-  float noiseFac = snoiseFractal(vec3(uv * u_noiseScale, v_radiusCoef * u_time * u_speed));
-  noiseFac = invLerp(-1.5, 0.4, noiseFac);
-  float circle = quadraticCircle(uv);
   circle = invLerp(u_circleOffset, u_circleOffset + u_circleAmplitude, circle);
   float shape = circle * noiseFac;
   float intensity = invLerp(u_intensityOffset, u_intensityOffset + u_intensityAmplitude, shape);
