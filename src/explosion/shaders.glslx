@@ -7,6 +7,7 @@ attribute float sizeCoef;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
+uniform vec3 cameraPosition;
 
 
 // fire smoke uniforms
@@ -36,6 +37,7 @@ uniform float u_sparkleIntensity;
 varying float v_radiusCoef;
 
 #include "../shaders/utils/interpolation.glslx"
+#include "../shaders/utils/model.glslx"
 #include "../shaders/utils/noise.glslx"
 
 vec3 colorRamp(vec3 color1, vec3 color2, vec3 color3, vec3 color4, float value) {
@@ -54,6 +56,16 @@ float quadraticCircle(vec2 coordinate) {
   float centerDistance = distance(coordinate, vec2(0.5));
   float quadraticDistance = pow(centerDistance, 2.0);
   return 1.0 - quadraticDistance;
+}
+
+export void fireSmokeVertex() {
+  vec3 modelPosition = getPosition(modelMatrix);
+  mat4 rotation = lookAt(modelPosition, cameraPosition);
+  gl_Position = projectionMatrix * viewMatrix * rotation * modelMatrix * vec4(position, 1.0);
+}
+
+export void fireSmokeFragment() {
+  gl_FragColor = vec4(vec3(0.0), 1.0);
 }
 
 export void fireCloudVertex() {

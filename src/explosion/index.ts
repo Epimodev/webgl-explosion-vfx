@@ -5,6 +5,8 @@ import { lerp } from "../math"
 import {
   fireCloudfragment,
   fireCloudVertex,
+  fireSmokeFragment,
+  fireSmokeVertex,
   sparklesFragment,
   sparklesVertex,
 } from "./shaders.glslx"
@@ -82,6 +84,28 @@ class RandomSparkles extends THREE.BufferGeometry {
       new THREE.Float32BufferAttribute(positions, 3),
     )
   }
+}
+
+export const fireSmokeMaterial = (): THREE.RawShaderMaterial => {
+  return new THREE.RawShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    vertexShader: fireSmokeVertex,
+    fragmentShader: fireSmokeFragment,
+    uniforms: {},
+  })
+}
+
+export const fireSmokeParticule = (
+  material: THREE.RawShaderMaterial,
+  position: THREE.Vector3,
+  scale: number,
+): THREE.Mesh => {
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material)
+  mesh.position.set(position.x, position.y, position.z)
+  mesh.scale.set(scale, scale, 1)
+
+  return mesh
 }
 
 export const createExplosion = (): {

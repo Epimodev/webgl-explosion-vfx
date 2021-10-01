@@ -4,7 +4,11 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass"
-import { createExplosion } from "./explosion"
+import {
+  createExplosion,
+  fireSmokeMaterial,
+  fireSmokeParticule,
+} from "./explosion"
 import { explosionPane } from "./explosion/tweakpane"
 import { createGround } from "./ground"
 import "./style.css"
@@ -43,11 +47,20 @@ const main = () => {
   const ground = createGround()
   scene.add(ground)
 
+  // Test with 1 fireSmoke particule
+  const material = fireSmokeMaterial()
+  const particule = fireSmokeParticule(
+    material,
+    new THREE.Vector3(0, 0, 0),
+    0.5,
+  )
+  scene.add(particule)
+
   // Create 1 explosion
   const explosion = createExplosion()
-  scene.add(explosion.light)
-  scene.add(explosion.fireSmoke)
-  scene.add(explosion.sparkles)
+  // scene.add(explosion.light)
+  // scene.add(explosion.fireSmoke)
+  // scene.add(explosion.sparkles)
 
   explosion.timeline.seek(0)
 
