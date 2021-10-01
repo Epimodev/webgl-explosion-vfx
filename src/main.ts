@@ -51,7 +51,7 @@ const main = () => {
   const material = fireSmokeMaterial()
   const particule = fireSmokeParticule(
     material,
-    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0.2, 0.2, 0),
     0.5,
   )
   scene.add(particule)
@@ -142,7 +142,7 @@ const createPlayground = ({
     bloomThreshold,
   )
   effectComposer.addPass(renderPass)
-  effectComposer.addPass(bloomPass)
+  // effectComposer.addPass(bloomPass)
 
   // Controls
   const controls = new OrbitControls(camera, canvas)

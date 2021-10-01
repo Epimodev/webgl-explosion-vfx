@@ -1,6 +1,7 @@
 precision highp float;
 
 attribute vec3 position;
+attribute vec2 uv;
 attribute float radiusCoef;
 attribute float sizeCoef;
 
@@ -35,6 +36,8 @@ uniform float u_sparkleRadius;
 uniform float u_sparkleIntensity;
 
 varying float v_radiusCoef;
+varying vec2 v_uv;
+varying vec3 v_position;
 
 #include "../shaders/utils/interpolation.glslx"
 #include "../shaders/utils/model.glslx"
@@ -58,14 +61,43 @@ float quadraticCircle(vec2 coordinate) {
   return 1.0 - quadraticDistance;
 }
 
+// translate model along the axe "model origin => world origin" (to increase explosion radius at the begining of animation)
+// translate model along y axis (to translate the smoke to the sky)
+// multiply model scale (to increase particule size)
+// we transform modelMatrix instead of multiply several transformation matrix to avoid issues with multiplication order
+// (for example apply scale after translation will impact translation)
+// this technique also make possible to use different position and scale for each particule without using more attributes
+// (we set different position and radius with mesh.position and mesh.scale)
+mat4 transformModelMatrix(mat4 modelMatrix, float translateFactor, float scaleFactor, float heightOffset) {
+  return mat4(
+    modelMatrix[0].x * scaleFactor, modelMatrix[0].y, modelMatrix[0].z, modelMatrix[0].w,
+    modelMatrix[1].x, modelMatrix[1].y * scaleFactor, modelMatrix[1].z, modelMatrix[1].w,
+    modelMatrix[2].x, modelMatrix[2].y, modelMatrix[2].z * scaleFactor, modelMatrix[2].w,
+    modelMatrix[3].xyz * translateFactor + vec3(0, heightOffset, 0), 1
+  );
+}
+
 export void fireSmokeVertex() {
-  vec3 modelPosition = getPosition(modelMatrix);
+  mat4 transformedModelMatrix = transformModelMatrix(modelMatrix, u_radius, u_particuleScale, u_height);
+  vec3 modelPosition = getPosition(transformedModelMatrix);
   mat4 rotation = lookAt(modelPosition, cameraPosition);
-  gl_Position = projectionMatrix * viewMatrix * rotation * modelMatrix * vec4(position, 1.0);
+  gl_Position = projectionMatrix * viewMatrix * rotation * transformedModelMatrix * vec4(position, 1.0);
+
+  v_uv = uv;
+  v_position = modelPosition;
 }
 
 export void fireSmokeFragment() {
-  gl_FragColor = vec4(vec3(0.0), 1.0);
+  float noiseFac = snoiseFractal(vec3(v_uv * u_noiseScale, v_position.x * u_time * u_speed));
+  noiseFac = invLerp(-1.5, 0.4, noiseFac);
+  float circle = quadraticCircle(v_uv);
+  circle = invLerp(u_circleOffset, u_circleOffset + u_circleAmplitude, circle);
+  float shape = circle * noiseFac;
+  float intensity = invLerp(u_intensityOffset, u_intensityOffset + u_intensityAmplitude, shape);
+  float alpha = invLerp(u_alphaOffset, u_alphaOffset + u_alphaAmplitude, shape);
+  vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, intensity);
+
+  gl_FragColor = vec4(color, alpha);
 }
 
 export void fireCloudVertex() {

@@ -9,9 +9,18 @@ mat4 lookAt(vec3 position, vec3 target) {
   vec3 yDirection = normalize(cross(zDirection, xDirection));
 
   return mat4(
-    xDirection.x, xDirection.y, xDirection.z, 0,
-    yDirection.x, yDirection.y, yDirection.z, 0,
-    zDirection.x, zDirection.y, zDirection.z, 0,
-    position.x, position.y, position.z, 1
+    xDirection, 0,
+    yDirection, 0,
+    zDirection, 0,
+    position, 1
+  );
+}
+
+mat4 translate(vec3 translation) {
+  return mat4(
+    1, 0, 0,     0,
+    0, 1, 0,     0,
+    0, 0, 1,     0,
+    translation, 1
   );
 }
