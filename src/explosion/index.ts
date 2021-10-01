@@ -11,42 +11,9 @@ import {
 
 export type Explosion = {
   light: THREE.PointLight
-  fireSmokeMaterial: THREE.RawShaderMaterial
-  fireSmoke: THREE.Group
+  fireSmoke: THREE.Mesh<THREE.BufferGeometry, THREE.RawShaderMaterial>
   sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
   timeline: Timeline
-}
-
-// semi icosphere points exported from Blender
-const icospherePoints = (): THREE.Vector3[] => {
-  return [
-    new THREE.Vector3(0.276388, 0.44722, 0.850649),
-    new THREE.Vector3(-0.723607, 0.44722, 0.525725),
-    new THREE.Vector3(-0.723607, 0.44722, -0.525725),
-    new THREE.Vector3(0.276388, 0.44722, -0.850649),
-    new THREE.Vector3(0.894426, 0.447216, 0.0),
-    new THREE.Vector3(0.0, 1.0, 0.0),
-    new THREE.Vector3(0.951058, 0.0, 0.309013),
-    new THREE.Vector3(0.951058, 0.0, -0.309013),
-    new THREE.Vector3(0.0, 0.0, 1.0),
-    new THREE.Vector3(0.587786, 0.0, 0.809017),
-    new THREE.Vector3(-0.951058, 0.0, 0.309013),
-    new THREE.Vector3(-0.587786, 0.0, 0.809017),
-    new THREE.Vector3(-0.587786, 0.0, -0.809017),
-    new THREE.Vector3(-0.951058, 0.0, -0.309013),
-    new THREE.Vector3(0.587786, 0.0, -0.809017),
-    new THREE.Vector3(0.0, 0.0, -1.0),
-    new THREE.Vector3(0.688189, 0.525736, 0.499997),
-    new THREE.Vector3(-0.262869, 0.525738, 0.809012),
-    new THREE.Vector3(-0.850648, 0.525736, 0.0),
-    new THREE.Vector3(-0.262869, 0.525738, -0.809012),
-    new THREE.Vector3(0.688189, 0.525736, -0.499997),
-    new THREE.Vector3(0.162456, 0.850654, 0.499995),
-    new THREE.Vector3(0.52573, 0.850652, 0.0),
-    new THREE.Vector3(-0.425323, 0.850654, 0.309011),
-    new THREE.Vector3(-0.425323, 0.850654, -0.309011),
-    new THREE.Vector3(0.162456, 0.850654, -0.499995),
-  ]
 }
 
 class RandomSparkles extends THREE.BufferGeometry {
@@ -70,25 +37,8 @@ class RandomSparkles extends THREE.BufferGeometry {
   }
 }
 
-const createFireSmokeParticules = (
-  material: THREE.RawShaderMaterial,
-): THREE.Group => {
-  const group = new THREE.Group()
-  const points = icospherePoints()
-  const geometry = new THREE.PlaneGeometry(1, 1)
-
-  for (const point of points) {
-    const mesh = new THREE.Mesh(geometry, material)
-    const scale = lerp(0.5, 1, Math.random())
-    mesh.position.set(point.x, point.y, point.z)
-    mesh.scale.set(scale, scale, scale)
-    group.add(mesh)
-  }
-
-  return group
-}
-
 export const createExplosion = (): Explosion => {
+  const fireSmokeGeometry = new THREE.PlaneGeometry(1, 1)
   const fireSmokeMaterial = new THREE.RawShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -96,17 +46,16 @@ export const createExplosion = (): Explosion => {
     fragmentShader: fireSmokeFragment,
     uniforms: {
       u_time: { value: 0 },
-      u_speed: { value: 2 },
-      u_radius: { value: 1.0 },
-      u_particuleScale: { value: 1.0 },
+      u_noiseSpeed: { value: 2 },
+      u_smokeScale: { value: 1.0 },
       u_height: { value: 0.0 },
       u_noiseScale: { value: 4 },
-      u_circleOffset: { value: 0.7 },
-      u_circleAmplitude: { value: 0.2 },
-      u_intensityOffset: { value: 0.39 },
-      u_intensityAmplitude: { value: 0.3 },
-      u_alphaOffset: { value: 0.15 },
-      u_alphaAmplitude: { value: 0.1 },
+      u_circleLimit: { value: 0.7 },
+      u_circleSmoothness: { value: 0.2 },
+      u_intensity: { value: 0.39 },
+      u_intensitySmoothness: { value: 0.3 },
+      u_transparency: { value: 0.15 },
+      u_transparencySmoothness: { value: 0.1 },
       u_c1: { value: new THREE.Color(0x000000) },
       u_c2: { value: new THREE.Color(0xff0000) },
       u_c3: { value: new THREE.Color(0xff8800) },
@@ -133,7 +82,7 @@ export const createExplosion = (): Explosion => {
   const light = new THREE.PointLight(0xffffff)
   light.position.set(0, 0.2, 0)
   light.intensity = 0
-  const fireSmoke = createFireSmokeParticules(fireSmokeMaterial)
+  const fireSmoke = new THREE.Mesh(fireSmokeGeometry, fireSmokeMaterial)
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
 
   const timeline = new Timeline([
@@ -155,7 +104,7 @@ export const createExplosion = (): Explosion => {
       ],
     },
     {
-      target: fireSmokeMaterial.uniforms.u_circleOffset,
+      target: fireSmokeMaterial.uniforms.u_circleLimit,
       key: "value",
       initialValue: 1.0,
       keyframes: [
@@ -167,31 +116,19 @@ export const createExplosion = (): Explosion => {
       ],
     },
     {
-      target: fireSmokeMaterial.uniforms.u_radius,
+      target: fireSmokeMaterial.uniforms.u_smokeScale,
       key: "value",
       initialValue: 0.1,
       keyframes: [
         {
           duration: 1000,
-          value: 0.6,
+          value: 2.5,
           easing: Easing.easeOutExpo,
         },
       ],
     },
     {
-      target: fireSmokeMaterial.uniforms.u_particuleScale,
-      key: "value",
-      initialValue: 0.1,
-      keyframes: [
-        {
-          duration: 1000,
-          value: 1.8,
-          easing: Easing.easeOutExpo,
-        },
-      ],
-    },
-    {
-      target: fireSmokeMaterial.uniforms.u_circleAmplitude,
+      target: fireSmokeMaterial.uniforms.u_circleSmoothness,
       key: "value",
       initialValue: 0.15,
       keyframes: [
@@ -209,12 +146,12 @@ export const createExplosion = (): Explosion => {
       initialValue: 0,
       keyframes: [
         {
-          duration: 700,
-          value: 0.3,
+          duration: 500,
+          value: 0.8,
           easing: Easing.easeOutQuad,
         },
         {
-          duration: 6000,
+          duration: 4000,
           value: 2,
           easing: Easing.easeInQuad,
         },
@@ -234,7 +171,7 @@ export const createExplosion = (): Explosion => {
       ],
     },
     {
-      target: fireSmokeMaterial.uniforms.u_alphaOffset,
+      target: fireSmokeMaterial.uniforms.u_transparency,
       key: "value",
       initialValue: 0.15,
       keyframes: [
@@ -247,7 +184,7 @@ export const createExplosion = (): Explosion => {
       ],
     },
     {
-      target: fireSmokeMaterial.uniforms.u_alphaAmplitude,
+      target: fireSmokeMaterial.uniforms.u_transparencySmoothness,
       key: "value",
       initialValue: 0.1,
       keyframes: [
@@ -312,7 +249,6 @@ export const createExplosion = (): Explosion => {
 
   return {
     light,
-    fireSmokeMaterial,
     fireSmoke,
     sparkles,
     timeline,

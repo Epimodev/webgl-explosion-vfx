@@ -4,9 +4,10 @@ import type { Timeline } from "../animation"
 import type { Explosion } from "./"
 
 export const explosionPane = (
-  { light, fireSmokeMaterial, fireSmoke, sparkles }: Explosion,
+  { light, fireSmoke, sparkles }: Explosion,
   timeline: Timeline,
 ): void => {
+  const { material: fireSmokeMaterial } = fireSmoke
   const { material: sparklesMaterial } = sparkles
 
   const params = {
@@ -67,19 +68,13 @@ export const explosionPane = (
     max: 10,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_speed, "value", {
+  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_noiseSpeed, "value", {
     label: "speed",
     min: 0,
     max: 10,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_radius, "value", {
-    label: "radius",
-    min: 0,
-    max: 10,
-    step: 0.01,
-  })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_particuleScale, "value", {
+  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_smokeScale, "value", {
     label: "particule scale",
     min: 0,
     max: 5,
@@ -91,54 +86,54 @@ export const explosionPane = (
     max: 10,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_circleOffset, "value", {
-    label: "circle offset",
+  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_circleLimit, "value", {
+    label: "circle limit",
     min: 0,
     max: 1,
     step: 0.01,
   })
   tabs.pages[0].addInput(
-    fireSmokeMaterial.uniforms.u_circleAmplitude,
+    fireSmokeMaterial.uniforms.u_circleSmoothness,
     "value",
     {
-      label: "circle amplitude",
+      label: "circle smoothness",
       min: 0,
       max: 1,
       step: 0.01,
     },
   )
-  tabs.pages[0].addInput(
-    fireSmokeMaterial.uniforms.u_intensityOffset,
-    "value",
-    {
-      label: "intensity offset",
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-  )
-  tabs.pages[0].addInput(
-    fireSmokeMaterial.uniforms.u_intensityAmplitude,
-    "value",
-    {
-      label: "intensity amplitude",
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-  )
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_alphaOffset, "value", {
-    label: "alpha offset",
+  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_intensity, "value", {
+    label: "intensity",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_alphaAmplitude, "value", {
-    label: "alpha amplitude",
+  tabs.pages[0].addInput(
+    fireSmokeMaterial.uniforms.u_intensitySmoothness,
+    "value",
+    {
+      label: "intensity smoothness",
+      min: 0,
+      max: 1,
+      step: 0.01,
+    },
+  )
+  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_transparency, "value", {
+    label: "transparency",
     min: 0,
-    max: 2,
+    max: 1,
     step: 0.01,
   })
+  tabs.pages[0].addInput(
+    fireSmokeMaterial.uniforms.u_transparencySmoothness,
+    "value",
+    {
+      label: "transparency smoothness",
+      min: 0,
+      max: 2,
+      step: 0.01,
+    },
+  )
 
   // Colors
   const colors = {

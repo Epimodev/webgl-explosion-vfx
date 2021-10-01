@@ -74,7 +74,7 @@ const main = () => {
     camera,
     onTick: () => {
       const elapsedTime = clock.getElapsedTime()
-      explosion.fireSmokeMaterial.uniforms.u_time.value = elapsedTime / 10
+      explosion.fireSmoke.material.uniforms.u_time.value = elapsedTime / 10
     },
   })
 }
