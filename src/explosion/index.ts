@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader"
 import { Timeline } from "../animation"
 import * as Easing from "../animation/easing"
 import { lerp } from "../math"
@@ -8,11 +9,13 @@ import {
   sparklesFragment,
   sparklesVertex,
 } from "./shaders.glslx"
+import streaksPlaneData from "./streaks-plane.obj?raw"
 
 export type Explosion = {
   light: THREE.PointLight
   fireSmoke: THREE.Mesh<THREE.BufferGeometry, THREE.RawShaderMaterial>
   sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
+  streaks: THREE.Mesh<THREE.BufferGeometry, THREE.RawShaderMaterial>
   timeline: Timeline
 }
 
@@ -35,6 +38,14 @@ class RandomSparkles extends THREE.BufferGeometry {
       new THREE.Float32BufferAttribute(positions, 3),
     )
   }
+}
+
+const createStreaksGeometry = (): THREE.BufferGeometry => {
+  const loader = new OBJLoader()
+  const parsed = loader.parse(streaksPlaneData)
+  const mesh = parsed.children[0] as THREE.Mesh
+
+  return mesh.geometry
 }
 
 export const createExplosion = (): Explosion => {
@@ -79,11 +90,15 @@ export const createExplosion = (): Explosion => {
     },
   })
 
+  const streaksGeometry = createStreaksGeometry()
+  const streaksMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
+
   const light = new THREE.PointLight(0xffffff)
   light.position.set(0, 0.2, 0)
   light.intensity = 0
   const fireSmoke = new THREE.Mesh(fireSmokeGeometry, fireSmokeMaterial)
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
+  const streaks = new THREE.Mesh(streaksGeometry, streaksMaterial)
 
   const timeline = new Timeline([
     {
@@ -251,6 +266,7 @@ export const createExplosion = (): Explosion => {
     light,
     fireSmoke,
     sparkles,
+    streaks,
     timeline,
   }
 }
