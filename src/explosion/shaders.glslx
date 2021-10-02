@@ -37,6 +37,7 @@ uniform float u_streaksCircleSmooth;
 uniform float u_streaksNoiseOffset;
 uniform float u_streaksNoiseX;
 uniform float u_streaksNoiseY;
+uniform float u_streaksNoiseSmooth;
 uniform float u_streaksMin;
 uniform float u_streaksSmooth;
 
@@ -126,11 +127,12 @@ export void streaksFragment() {
   centerGradient = invLerp(0.0, u_streaksCircleSmooth, centerGradient);
   centerGradient = clamp(centerGradient, 0.0, 1.0);
   float sideGradient = fract(v_uv.x) * fract(1.0 - v_uv.x);
-  sideGradient = invLerp(0.0, 0.2, sideGradient);
+  sideGradient = invLerp(0.0, 0.1, sideGradient);
   sideGradient = clamp(sideGradient, 0.0, 1.0);
 
   vec3 noiseUv = vec3(v_uv.x * u_streaksNoiseX, v_uv.y * u_streaksNoiseY - u_streaksNoiseOffset, 0.0);
   float noise = snoise(noiseUv);
+  noise = invLerp(0.0, u_streaksNoiseSmooth, noise);
 
   float factor = centerGradient * sideGradient * noise;
   factor = invLerp(u_streaksMin, u_streaksMin + u_streaksSmooth, factor);

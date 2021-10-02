@@ -263,6 +263,16 @@ export const explosionPane = (
     max: 10,
     step: 0.01,
   })
+  tabs.pages[2].addInput(
+    streaksMaterial.uniforms.u_streaksNoiseSmooth,
+    "value",
+    {
+      label: "noise smooth",
+      min: 0,
+      max: 1,
+      step: 0.01,
+    },
+  )
   tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksMin, "value", {
     label: "min",
     min: 0,
@@ -272,7 +282,7 @@ export const explosionPane = (
   tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksSmooth, "value", {
     label: "smooth",
     min: 0,
-    max: 2,
+    max: 10,
     step: 0.01,
   })
 }
