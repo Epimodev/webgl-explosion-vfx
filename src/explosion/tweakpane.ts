@@ -4,11 +4,12 @@ import type { Timeline } from "../animation"
 import type { Explosion } from "./"
 
 export const explosionPane = (
-  { light, fireSmoke, sparkles }: Explosion,
+  { light, fireSmoke, sparkles, streaks }: Explosion,
   timeline: Timeline,
 ): void => {
   const { material: fireSmokeMaterial } = fireSmoke
   const { material: sparklesMaterial } = sparkles
+  const { material: streaksMaterial } = streaks
 
   const params = {
     timelineTimestamp: 0,
@@ -40,7 +41,11 @@ export const explosionPane = (
   })
 
   const tabs = pane.addTab({
-    pages: [{ title: "Fire smoke" }, { title: "Sparkles" }],
+    pages: [
+      { title: "Fire smoke" },
+      { title: "Sparkles" },
+      { title: "Streaks" },
+    ],
   })
 
   /* ==================== */
@@ -216,4 +221,58 @@ export const explosionPane = (
       view: "color",
     })
     .on("change", handleColorChange(sparklesMaterial.uniforms.u_c2.value))
+
+  /* ==================== */
+  /* ====== Streaks ===== */
+  /* ==================== */
+  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksRadius, "value", {
+    label: "radius",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  })
+  tabs.pages[2].addInput(
+    streaksMaterial.uniforms.u_streaksCircleSmooth,
+    "value",
+    {
+      label: "circle smooth",
+      min: 0,
+      max: 1,
+      step: 0.01,
+    },
+  )
+  tabs.pages[2].addInput(
+    streaksMaterial.uniforms.u_streaksNoiseOffset,
+    "value",
+    {
+      label: "noise offset",
+      min: 0,
+      max: 10,
+      step: 0.01,
+    },
+  )
+  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksNoiseX, "value", {
+    label: "noise x",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksNoiseY, "value", {
+    label: "noise y",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksMin, "value", {
+    label: "min",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  })
+  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksSmooth, "value", {
+    label: "smooth",
+    min: 0,
+    max: 2,
+    step: 0.01,
+  })
 }

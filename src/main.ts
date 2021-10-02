@@ -130,7 +130,7 @@ const createPlayground = ({
     bloomThreshold,
   )
   effectComposer.addPass(renderPass)
-  effectComposer.addPass(bloomPass)
+  // effectComposer.addPass(bloomPass)
 
   // Controls
   const controls = new OrbitControls(camera, canvas)

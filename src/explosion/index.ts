@@ -8,6 +8,8 @@ import {
   fireSmokeVertex,
   sparklesFragment,
   sparklesVertex,
+  streaksFragment,
+  streaksVertex,
 } from "./shaders.glslx"
 import streaksPlaneData from "./streaks-plane.obj?raw"
 
@@ -91,7 +93,25 @@ export const createExplosion = (): Explosion => {
   })
 
   const streaksGeometry = createStreaksGeometry()
-  const streaksMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
+  const streaksMaterial = new THREE.RawShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    vertexShader: streaksVertex,
+    fragmentShader: streaksFragment,
+    uniforms: {
+      u_streaksRadius: { value: 1.0 },
+      u_streaksCircleSmooth: { value: 0.5 },
+      u_streaksNoiseOffset: { value: 1.0 },
+      u_streaksNoiseX: { value: 8.0 },
+      u_streaksNoiseY: { value: 2.3 },
+      u_streaksMin: { value: 0.0 },
+      u_streaksSmooth: { value: 0.5 },
+      u_c1: { value: new THREE.Color(0x000000) },
+      u_c2: { value: new THREE.Color(0xff0000) },
+      u_c3: { value: new THREE.Color(0xff8800) },
+      u_c4: { value: new THREE.Color(0xffff88) },
+    },
+  })
 
   const light = new THREE.PointLight(0xffffff)
   light.position.set(0, 0.2, 0)
