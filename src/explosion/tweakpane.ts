@@ -1,11 +1,10 @@
 import * as THREE from "three"
 import * as Tweakpan from "tweakpane"
-import type { Timeline } from "../animation"
 import type { Explosion } from "./"
 
 export const explosionPane = (
-  { light, fireSmoke, sparkles, streaks }: Explosion,
-  timeline: Timeline,
+  sun: THREE.DirectionalLight,
+  { light, fireSmoke, sparkles, streaks, timeline }: Explosion,
 ): void => {
   const { material: fireSmokeMaterial } = fireSmoke
   const { material: sparklesMaterial } = sparkles
@@ -42,6 +41,7 @@ export const explosionPane = (
 
   const tabs = pane.addTab({
     pages: [
+      { title: "Sun" },
       { title: "Fire smoke" },
       { title: "Sparkles" },
       { title: "Streaks" },
@@ -49,9 +49,37 @@ export const explosionPane = (
   })
 
   /* ==================== */
+  /* ======== Sun ======= */
+  /* ==================== */
+  tabs.pages[0].addInput(sun, "intensity", {
+    label: "Intensity",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  tabs.pages[0].addInput(sun.position, "x", {
+    label: "x",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  tabs.pages[0].addInput(sun.position, "y", {
+    label: "y",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  tabs.pages[0].addInput(sun.position, "z", {
+    label: "z",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+
+  /* ==================== */
   /* ======= Light ====== */
   /* ==================== */
-  tabs.pages[0].addInput(light, "intensity", {
+  tabs.pages[1].addInput(light, "intensity", {
     label: "light",
     min: 0,
     max: 5,
@@ -61,43 +89,43 @@ export const explosionPane = (
   /* ==================== */
   /* ===== Firesmoke ==== */
   /* ==================== */
-  tabs.pages[0].addInput(fireSmoke.scale, "y", {
+  tabs.pages[1].addInput(fireSmoke.scale, "y", {
     label: "scale y",
     min: 0,
     max: 3,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_height, "value", {
+  tabs.pages[1].addInput(fireSmokeMaterial.uniforms.u_height, "value", {
     label: "height",
     min: 0,
     max: 10,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_noiseSpeed, "value", {
+  tabs.pages[1].addInput(fireSmokeMaterial.uniforms.u_noiseSpeed, "value", {
     label: "speed",
     min: 0,
     max: 10,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_smokeScale, "value", {
+  tabs.pages[1].addInput(fireSmokeMaterial.uniforms.u_smokeScale, "value", {
     label: "particule scale",
     min: 0,
     max: 5,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_noiseScale, "value", {
+  tabs.pages[1].addInput(fireSmokeMaterial.uniforms.u_noiseScale, "value", {
     label: "noise scale",
     min: 1,
     max: 10,
     step: 0.01,
   })
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_circleLimit, "value", {
+  tabs.pages[1].addInput(fireSmokeMaterial.uniforms.u_circleLimit, "value", {
     label: "circle limit",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  tabs.pages[0].addInput(
+  tabs.pages[1].addInput(
     fireSmokeMaterial.uniforms.u_circleSmoothness,
     "value",
     {
@@ -107,13 +135,13 @@ export const explosionPane = (
       step: 0.01,
     },
   )
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_intensity, "value", {
+  tabs.pages[1].addInput(fireSmokeMaterial.uniforms.u_intensity, "value", {
     label: "intensity",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  tabs.pages[0].addInput(
+  tabs.pages[1].addInput(
     fireSmokeMaterial.uniforms.u_intensitySmoothness,
     "value",
     {
@@ -123,13 +151,13 @@ export const explosionPane = (
       step: 0.01,
     },
   )
-  tabs.pages[0].addInput(fireSmokeMaterial.uniforms.u_transparency, "value", {
+  tabs.pages[1].addInput(fireSmokeMaterial.uniforms.u_transparency, "value", {
     label: "transparency",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  tabs.pages[0].addInput(
+  tabs.pages[1].addInput(
     fireSmokeMaterial.uniforms.u_transparencySmoothness,
     "value",
     {
@@ -152,23 +180,23 @@ export const explosionPane = (
     ({ value }: Tweakpan.TpChangeEvent<string>) => {
       colorInstance.set(value)
     }
-  tabs.pages[0]
+  tabs.pages[1]
     .addInput(colors, "c1", {
       label: "color 1",
     })
     .on("change", handleColorChange(fireSmokeMaterial.uniforms.u_c1.value))
-  tabs.pages[0]
+  tabs.pages[1]
     .addInput(colors, "c2", {
       label: "color 2",
       view: "color",
     })
     .on("change", handleColorChange(fireSmokeMaterial.uniforms.u_c2.value))
-  tabs.pages[0]
+  tabs.pages[1]
     .addInput(colors, "c3", {
       label: "color 3",
     })
     .on("change", handleColorChange(fireSmokeMaterial.uniforms.u_c3.value))
-  tabs.pages[0]
+  tabs.pages[1]
     .addInput(colors, "c4", {
       label: "color 4",
     })
@@ -177,25 +205,25 @@ export const explosionPane = (
   /* ==================== */
   /* ===== Sparkles ===== */
   /* ==================== */
-  tabs.pages[1].addInput(sparklesMaterial.uniforms.u_sparkleHeight, "value", {
+  tabs.pages[2].addInput(sparklesMaterial.uniforms.u_sparkleHeight, "value", {
     label: "height",
     min: 0,
     max: 5,
     step: 0.01,
   })
-  tabs.pages[1].addInput(sparklesMaterial.uniforms.u_sparkleScale, "value", {
+  tabs.pages[2].addInput(sparklesMaterial.uniforms.u_sparkleScale, "value", {
     label: "scale",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  tabs.pages[1].addInput(sparklesMaterial.uniforms.u_sparkleRadius, "value", {
+  tabs.pages[2].addInput(sparklesMaterial.uniforms.u_sparkleRadius, "value", {
     label: "radius",
     min: 0,
     max: 2,
     step: 0.01,
   })
-  tabs.pages[1].addInput(
+  tabs.pages[2].addInput(
     sparklesMaterial.uniforms.u_sparkleIntensity,
     "value",
     {
@@ -210,12 +238,12 @@ export const explosionPane = (
     c1: `#${sparklesMaterial.uniforms.u_c1.value.getHexString()}`,
     c2: `#${sparklesMaterial.uniforms.u_c2.value.getHexString()}`,
   }
-  tabs.pages[1]
+  tabs.pages[2]
     .addInput(sparklesColors, "c1", {
       label: "color 1",
     })
     .on("change", handleColorChange(sparklesMaterial.uniforms.u_c1.value))
-  tabs.pages[1]
+  tabs.pages[2]
     .addInput(sparklesColors, "c2", {
       label: "color 2",
       view: "color",
@@ -225,13 +253,13 @@ export const explosionPane = (
   /* ==================== */
   /* ====== Streaks ===== */
   /* ==================== */
-  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksRadius, "value", {
+  tabs.pages[3].addInput(streaksMaterial.uniforms.u_streaksRadius, "value", {
     label: "radius",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  tabs.pages[2].addInput(
+  tabs.pages[3].addInput(
     streaksMaterial.uniforms.u_streaksCircleSmooth,
     "value",
     {
@@ -241,7 +269,7 @@ export const explosionPane = (
       step: 0.01,
     },
   )
-  tabs.pages[2].addInput(
+  tabs.pages[3].addInput(
     streaksMaterial.uniforms.u_streaksNoiseOffset,
     "value",
     {
@@ -251,19 +279,19 @@ export const explosionPane = (
       step: 0.01,
     },
   )
-  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksNoiseX, "value", {
+  tabs.pages[3].addInput(streaksMaterial.uniforms.u_streaksNoiseX, "value", {
     label: "noise x",
     min: 0,
     max: 20,
     step: 0.01,
   })
-  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksNoiseY, "value", {
+  tabs.pages[3].addInput(streaksMaterial.uniforms.u_streaksNoiseY, "value", {
     label: "noise y",
     min: 0,
     max: 10,
     step: 0.01,
   })
-  tabs.pages[2].addInput(
+  tabs.pages[3].addInput(
     streaksMaterial.uniforms.u_streaksNoiseSmooth,
     "value",
     {
@@ -273,19 +301,19 @@ export const explosionPane = (
       step: 0.01,
     },
   )
-  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksMin, "value", {
+  tabs.pages[3].addInput(streaksMaterial.uniforms.u_streaksMin, "value", {
     label: "min",
     min: 0,
     max: 1,
     step: 0.01,
   })
-  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksSmooth, "value", {
+  tabs.pages[3].addInput(streaksMaterial.uniforms.u_streaksSmooth, "value", {
     label: "smooth",
     min: 0,
     max: 10,
     step: 0.01,
   })
-  tabs.pages[2].addInput(streaksMaterial.uniforms.u_streaksAlpha, "value", {
+  tabs.pages[3].addInput(streaksMaterial.uniforms.u_streaksAlpha, "value", {
     label: "alpha",
     min: 0,
     max: 1,

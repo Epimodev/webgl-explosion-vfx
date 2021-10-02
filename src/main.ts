@@ -20,24 +20,18 @@ const main = () => {
   const near = 0.1
   const far = 100
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
-  camera.position.z = 5
+  camera.position.z = -5
   camera.position.x = 0
   camera.position.y = 1
   camera.lookAt(new THREE.Vector3(0, 0, 0))
 
   // Lights
-  const firstLight = new THREE.PointLight(0xffffff)
-  firstLight.intensity = 4
-  scene.add(firstLight)
-  firstLight.position.x = 3
-  firstLight.position.y = 0.2
-  firstLight.position.z = 1
-  const secondLight = new THREE.PointLight(0xffffff)
-  secondLight.intensity = 4
-  scene.add(secondLight)
-  secondLight.position.x = -1
-  secondLight.position.y = 0.1
-  secondLight.position.z = -3
+  const sun = new THREE.DirectionalLight(0xffffff)
+  sun.intensity = 2
+  sun.position.x = 6.3
+  sun.position.y = 3.5
+  sun.position.z = 2
+  scene.add(sun)
 
   // Ground
   const ground = createGround()
@@ -53,7 +47,7 @@ const main = () => {
   explosion.timeline.seek(0)
 
   // Setup pane config
-  explosionPane(explosion, explosion.timeline)
+  explosionPane(sun, explosion)
 
   // Play button
   const playButton = document.getElementById("play-button")!

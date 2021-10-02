@@ -1,13 +1,12 @@
 import * as THREE from "three"
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader"
+import groundData from "./ground.obj?raw"
 
-export const createGround = () => {
+export const createGround = (): THREE.Mesh => {
   const textureLoader = new THREE.TextureLoader()
-  const textureRepeat = 3
+  const textureRepeat = 8
   const groundColor = textureLoader.load(
     "/textures/ground-dirty-rocky/color.jpg",
-  )
-  const groundDisplacement = textureLoader.load(
-    "/textures/ground-dirty-rocky/displacement.jpg",
   )
   const groundRoughness = textureLoader.load(
     "/textures/ground-dirty-rocky/roughness.jpg",
@@ -19,10 +18,6 @@ export const createGround = () => {
   groundColor.wrapT = THREE.RepeatWrapping
   groundColor.repeat.x = textureRepeat
   groundColor.repeat.y = textureRepeat
-  groundDisplacement.wrapS = THREE.RepeatWrapping
-  groundDisplacement.wrapT = THREE.RepeatWrapping
-  groundDisplacement.repeat.x = textureRepeat
-  groundDisplacement.repeat.y = textureRepeat
   groundRoughness.wrapS = THREE.RepeatWrapping
   groundRoughness.wrapT = THREE.RepeatWrapping
   groundRoughness.repeat.x = textureRepeat
@@ -32,18 +27,19 @@ export const createGround = () => {
   groundNormals.repeat.x = textureRepeat
   groundNormals.repeat.y = textureRepeat
 
+  const objectLoader = new OBJLoader()
+  const parsedScene = objectLoader.parse(groundData)
+  const parsedMesh = parsedScene.children[0] as THREE.Mesh
+  const groundGeometry = parsedMesh.geometry
+
   // Ground
-  const plane = new THREE.PlaneGeometry(5, 5, 300, 300)
   const groundMaterial = new THREE.MeshStandardMaterial({
     map: groundColor,
-    displacementMap: groundDisplacement,
-    displacementScale: 0.1,
     roughnessMap: groundRoughness,
     normalMap: groundNormals,
   })
 
-  const ground = new THREE.Mesh(plane, groundMaterial)
-  ground.rotation.x = -Math.PI / 2
+  const ground = new THREE.Mesh(groundGeometry, groundMaterial)
   ground.position.y = -0.4
 
   return ground
