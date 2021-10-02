@@ -40,6 +40,7 @@ uniform float u_streaksNoiseY;
 uniform float u_streaksNoiseSmooth;
 uniform float u_streaksMin;
 uniform float u_streaksSmooth;
+uniform float u_streaksAlpha;
 
 varying vec2 v_uv;
 varying vec3 v_position;
@@ -138,7 +139,7 @@ export void streaksFragment() {
   factor = invLerp(u_streaksMin, u_streaksMin + u_streaksSmooth, factor);
 
   vec3 color = colorRamp(u_c1, u_c2, u_c3, u_c4, factor);
-  float alpha = factor;
+  float alpha = factor * u_streaksAlpha;
 
   gl_FragColor = vec4(color, alpha);
 }

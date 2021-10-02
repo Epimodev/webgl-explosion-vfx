@@ -45,9 +45,9 @@ const main = () => {
 
   // Create 1 explosion
   const explosion = createExplosion()
-  // scene.add(explosion.light)
-  // scene.add(explosion.fireSmoke)
-  // scene.add(explosion.sparkles)
+  scene.add(explosion.light)
+  scene.add(explosion.fireSmoke)
+  scene.add(explosion.sparkles)
   scene.add(explosion.streaks)
 
   explosion.timeline.seek(0)
@@ -130,7 +130,7 @@ const createPlayground = ({
     bloomThreshold,
   )
   effectComposer.addPass(renderPass)
-  // effectComposer.addPass(bloomPass)
+  effectComposer.addPass(bloomPass)
 
   // Controls
   const controls = new OrbitControls(camera, canvas)

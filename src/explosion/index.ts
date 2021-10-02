@@ -100,13 +100,14 @@ export const createExplosion = (): Explosion => {
     fragmentShader: streaksFragment,
     uniforms: {
       u_streaksRadius: { value: 1.0 },
-      u_streaksCircleSmooth: { value: 0.5 },
-      u_streaksNoiseOffset: { value: 1.0 },
-      u_streaksNoiseX: { value: 8.0 },
-      u_streaksNoiseY: { value: 2.3 },
+      u_streaksCircleSmooth: { value: 0.3 },
+      u_streaksNoiseOffset: { value: 0 },
+      u_streaksNoiseX: { value: 10 },
+      u_streaksNoiseY: { value: 1 },
       u_streaksNoiseSmooth: { value: 0.1 },
       u_streaksMin: { value: 0.0 },
-      u_streaksSmooth: { value: 3.5 },
+      u_streaksSmooth: { value: 2.5 },
+      u_streaksAlpha: { value: 1 },
       u_c1: { value: new THREE.Color(0x000000) },
       u_c2: { value: new THREE.Color(0xff0000) },
       u_c3: { value: new THREE.Color(0xff8800) },
@@ -120,6 +121,7 @@ export const createExplosion = (): Explosion => {
   const fireSmoke = new THREE.Mesh(fireSmokeGeometry, fireSmokeMaterial)
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
   const streaks = new THREE.Mesh(streaksGeometry, streaksMaterial)
+  streaks.position.set(0, -0.2, 0)
 
   const timeline = new Timeline([
     {
@@ -278,6 +280,45 @@ export const createExplosion = (): Explosion => {
           duration: 1500,
           value: 2,
           easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: streaksMaterial.uniforms.u_streaksRadius,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 50,
+          duration: 200,
+          value: 1,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: streaksMaterial.uniforms.u_streaksAlpha,
+      key: "value",
+      initialValue: 1,
+      keyframes: [
+        {
+          delay: 200,
+          duration: 200,
+          value: 0,
+          easing: Easing.easeOutQuad,
+        },
+      ],
+    },
+    {
+      target: streaksMaterial.uniforms.u_streaksNoiseOffset,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 50,
+          duration: 400,
+          value: 1,
+          easing: Easing.easeOutQuad,
         },
       ],
     },
