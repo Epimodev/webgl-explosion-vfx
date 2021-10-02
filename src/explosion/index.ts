@@ -121,7 +121,10 @@ export const createExplosion = (): Explosion => {
   const fireSmoke = new THREE.Mesh(fireSmokeGeometry, fireSmokeMaterial)
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
   const streaks = new THREE.Mesh(streaksGeometry, streaksMaterial)
-  streaks.position.set(0, -0.2, 0)
+
+  fireSmoke.renderOrder = 2
+  sparkles.renderOrder = 3
+  streaks.renderOrder = 1
 
   const timeline = new Timeline([
     {
