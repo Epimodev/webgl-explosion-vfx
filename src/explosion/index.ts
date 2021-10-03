@@ -96,17 +96,15 @@ export const createExplosion = ({
     uniforms: {
       u_streaksRadius: { value: 1.0 },
       u_streaksCircleSmooth: { value: 0.3 },
-      u_streaksNoiseOffset: { value: 0 },
-      u_streaksNoiseX: { value: 10 },
+      u_streaksNoiseOffset: { value: 6 },
+      u_streaksNoiseX: { value: 20 },
       u_streaksNoiseY: { value: 1 },
-      u_streaksNoiseSmooth: { value: 0.1 },
       u_streaksMin: { value: 0.0 },
       u_streaksSmooth: { value: 2.5 },
       u_streaksAlpha: { value: 1 },
-      u_c1: { value: new THREE.Color(0x000000) },
-      u_c2: { value: new THREE.Color(0xff0000) },
-      u_c3: { value: new THREE.Color(0xff8800) },
-      u_c4: { value: new THREE.Color(0xffff88) },
+      u_c1: { value: new THREE.Color(0xff2900) },
+      u_c2: { value: new THREE.Color(0xff8800) },
+      u_c3: { value: new THREE.Color(0xffff88) },
     },
   })
 
@@ -274,8 +272,8 @@ export const createExplosion = ({
       initialValue: 1,
       keyframes: [
         {
-          delay: 200,
-          duration: 200,
+          delay: 100,
+          duration: 150,
           value: 0,
           easing: Easing.easeOutQuad,
         },
@@ -284,12 +282,12 @@ export const createExplosion = ({
     {
       target: streaksMaterial.uniforms.u_streaksNoiseOffset,
       key: "value",
-      initialValue: 0,
+      initialValue: 6,
       keyframes: [
         {
           delay: 50,
           duration: 400,
-          value: 1,
+          value: 7,
           easing: Easing.easeOutQuad,
         },
       ],

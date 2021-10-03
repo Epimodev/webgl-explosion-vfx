@@ -285,16 +285,6 @@ export const explosionPane = (
     max: 10,
     step: 0.01,
   })
-  tabs.pages[3].addInput(
-    streaksMaterial.uniforms.u_streaksNoiseSmooth,
-    "value",
-    {
-      label: "noise smooth",
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-  )
   tabs.pages[3].addInput(streaksMaterial.uniforms.u_streaksMin, "value", {
     label: "min",
     min: 0,
@@ -313,4 +303,27 @@ export const explosionPane = (
     max: 1,
     step: 0.01,
   })
+  // colors
+  const streaksColors = {
+    c1: `#${streaksMaterial.uniforms.u_c1.value.getHexString()}`,
+    c2: `#${streaksMaterial.uniforms.u_c2.value.getHexString()}`,
+    c3: `#${streaksMaterial.uniforms.u_c3.value.getHexString()}`,
+  }
+  tabs.pages[3]
+    .addInput(streaksColors, "c1", {
+      label: "color 1",
+    })
+    .on("change", handleColorChange(streaksMaterial.uniforms.u_c1.value))
+  tabs.pages[3]
+    .addInput(streaksColors, "c2", {
+      label: "color 2",
+      view: "color",
+    })
+    .on("change", handleColorChange(streaksMaterial.uniforms.u_c2.value))
+  tabs.pages[3]
+    .addInput(streaksColors, "c3", {
+      label: "color 3",
+      view: "color",
+    })
+    .on("change", handleColorChange(streaksMaterial.uniforms.u_c3.value))
 }

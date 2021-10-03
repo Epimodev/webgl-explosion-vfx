@@ -52,6 +52,7 @@ const main = () => {
 
       explosion.timeline.seek(0)
 
+      // Add tweakpane only during development
       if (process.env.NODE_ENV === "development") {
         import("./explosion/tweakpane").then(({ explosionPane }) => {
           // Setup pane config
@@ -100,6 +101,7 @@ const getLoaderControls = () => {
     ".progress-bar-loaded",
   ) as HTMLDivElement
 
+  // Remove loading end animation during development
   if (process.env.NODE_ENV === "development") {
     overlay.classList.add("overlay-hidden")
     return {
