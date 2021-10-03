@@ -89,12 +89,6 @@ export const explosionPane = (
   /* ==================== */
   /* ===== Firesmoke ==== */
   /* ==================== */
-  tabs.pages[1].addInput(fireSmoke.scale, "y", {
-    label: "scale y",
-    min: 0,
-    max: 3,
-    step: 0.01,
-  })
   tabs.pages[1].addInput(fireSmokeMaterial.uniforms.u_height, "value", {
     label: "height",
     min: 0,
