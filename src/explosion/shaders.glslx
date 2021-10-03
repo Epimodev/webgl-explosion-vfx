@@ -41,8 +41,14 @@ uniform float u_streaksMin;
 uniform float u_streaksSmooth;
 uniform float u_streaksAlpha;
 
+// dust uniforms
+uniform float u_dustRadius;
+uniform float u_dustHeight;
+uniform float u_dustScale;
+
 varying vec2 v_uv;
 varying vec3 v_position;
+varying vec3 v_direction;
 
 #include "../shaders/utils/interpolation.glslx"
 #include "../shaders/utils/model.glslx"
@@ -147,6 +153,26 @@ export void streaksFragment() {
 
   vec3 color = streaksColorRamp(u_c1, u_c2, u_c3, noise);
   float alpha = factor * u_streaksAlpha;
+
+  gl_FragColor = vec4(color, alpha);
+}
+
+export void dustVertex() {
+  // set during group creation in createDustGroup
+  vec3 direction = getPosition(modelMatrix);
+  vec3 translation = direction * u_dustRadius + vec3(0.0, u_dustHeight, 0.0);
+  mat4 rotation = lookAt(translation, cameraPosition);
+  mat4 transformMatrix = transform(u_dustScale, translation);
+
+  gl_Position = projectionMatrix * viewMatrix * transformMatrix * rotation * vec4(position, 1.0);
+
+  v_uv = uv;
+  v_direction = direction;
+}
+
+export void dustFragment() {
+  vec3 color = vec3(0.0);
+  float alpha = 1.0;
 
   gl_FragColor = vec4(color, alpha);
 }

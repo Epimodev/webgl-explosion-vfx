@@ -4,11 +4,15 @@ import type { Explosion } from "./"
 
 export const explosionPane = (
   sun: THREE.DirectionalLight,
-  { light, fireSmoke, sparkles, streaks, timeline }: Explosion,
+  { light, fireSmoke, sparkles, streaks, dust, timeline }: Explosion,
 ): void => {
   const { material: fireSmokeMaterial } = fireSmoke
   const { material: sparklesMaterial } = sparkles
   const { material: streaksMaterial } = streaks
+  const [{ material: dustMaterial }] = dust.children as THREE.Mesh<
+    THREE.BufferGeometry,
+    THREE.RawShaderMaterial
+  >[]
 
   const params = {
     timelineTimestamp: 0,
@@ -45,6 +49,7 @@ export const explosionPane = (
       { title: "Fire smoke" },
       { title: "Sparkles" },
       { title: "Streaks" },
+      { title: "Dust" },
     ],
   })
 
@@ -326,4 +331,42 @@ export const explosionPane = (
       view: "color",
     })
     .on("change", handleColorChange(streaksMaterial.uniforms.u_c3.value))
+
+  /* ==================== */
+  /* ======= Dust ======= */
+  /* ==================== */
+  tabs.pages[4].addInput(dustMaterial.uniforms.u_dustRadius, "value", {
+    label: "radius",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  tabs.pages[4].addInput(dustMaterial.uniforms.u_dustHeight, "value", {
+    label: "height",
+    min: 0,
+    max: 2,
+    step: 0.01,
+  })
+  tabs.pages[4].addInput(dustMaterial.uniforms.u_dustScale, "value", {
+    label: "scale",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  })
+  // colors
+  const dustColors = {
+    c1: `#${dustMaterial.uniforms.u_c1.value.getHexString()}`,
+    c2: `#${dustMaterial.uniforms.u_c2.value.getHexString()}`,
+  }
+  tabs.pages[4]
+    .addInput(dustColors, "c1", {
+      label: "color 1",
+    })
+    .on("change", handleColorChange(dustMaterial.uniforms.u_c1.value))
+  tabs.pages[4]
+    .addInput(dustColors, "c2", {
+      label: "color 2",
+      view: "color",
+    })
+    .on("change", handleColorChange(dustMaterial.uniforms.u_c2.value))
 }

@@ -49,6 +49,7 @@ const main = () => {
       scene.add(explosion.fireSmoke)
       scene.add(explosion.sparkles)
       scene.add(explosion.streaks)
+      scene.add(explosion.dust)
 
       explosion.timeline.seek(0)
 

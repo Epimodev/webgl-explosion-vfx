@@ -5,5 +5,7 @@ declare const shaders: {
   readonly sparklesFragment: string
   readonly streaksVertex: string
   readonly streaksFragment: string
+  readonly dustVertex: string
+  readonly dustFragment: string
 }
 export = shaders

@@ -3,6 +3,8 @@ import { Timeline } from "../animation"
 import * as Easing from "../animation/easing"
 import { lerp } from "../math"
 import {
+  dustFragment,
+  dustVertex,
   fireSmokeFragment,
   fireSmokeVertex,
   sparklesFragment,
@@ -20,6 +22,7 @@ export type Explosion = {
   fireSmoke: THREE.Mesh<THREE.BufferGeometry, THREE.RawShaderMaterial>
   sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
   streaks: THREE.Mesh<THREE.BufferGeometry, THREE.RawShaderMaterial>
+  dust: THREE.Group
   timeline: Timeline
 }
 
@@ -42,6 +45,26 @@ class RandomSparkles extends THREE.BufferGeometry {
       new THREE.Float32BufferAttribute(positions, 3),
     )
   }
+}
+
+const createDustGroup = (
+  geometry: THREE.BufferGeometry,
+  material: THREE.RawShaderMaterial,
+  nbParticules: number,
+): THREE.Group => {
+  const group = new THREE.Group()
+  const angleStep = (2 * Math.PI) / nbParticules
+
+  for (let i = 0; i < nbParticules; i += 1) {
+    const angle = angleStep * i
+    const x = Math.cos(angle)
+    const z = -Math.sin(angle)
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.position.set(x, 0, z)
+    group.add(mesh)
+  }
+
+  return group
 }
 
 export const createExplosion = ({
@@ -108,12 +131,30 @@ export const createExplosion = ({
     },
   })
 
+  const dustGeometry = new THREE.PlaneGeometry(1, 1)
+  const dustMaterial = new THREE.RawShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    vertexShader: dustVertex,
+    fragmentShader: dustFragment,
+    uniforms: {
+      u_dustRadius: { value: 1 },
+      u_dustHeight: { value: 0 },
+      u_dustScale: { value: 1 },
+      u_c1: { value: new THREE.Color(0xff2900) },
+      u_c2: { value: new THREE.Color(0xff8800) },
+    },
+    wireframe: true,
+  })
+  const nbDustParticules = 3
+
   const light = new THREE.PointLight(0xffffff)
   light.position.set(0, 0.2, 0)
   light.intensity = 0
   const fireSmoke = new THREE.Mesh(fireSmokeGeometry, fireSmokeMaterial)
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
   const streaks = new THREE.Mesh(streaksPlaneGeometry, streaksMaterial)
+  const dust = createDustGroup(dustGeometry, dustMaterial, nbDustParticules)
 
   fireSmoke.renderOrder = 2
   sparkles.renderOrder = 3
@@ -299,6 +340,7 @@ export const createExplosion = ({
     fireSmoke,
     sparkles,
     streaks,
+    dust,
     timeline,
   }
 }
