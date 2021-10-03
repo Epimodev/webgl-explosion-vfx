@@ -262,6 +262,8 @@ const createPlayground = ({
   controls.enableZoom = false
   controls.minPolarAngle = 0
   controls.maxPolarAngle = Math.PI / 2
+  // controls.autoRotate = true
+  // controls.autoRotateSpeed = 1
 
   const updateSize = () => {
     // Update size
