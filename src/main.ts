@@ -6,7 +6,6 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass"
 import { createExplosion } from "./explosion"
-import { explosionPane } from "./explosion/tweakpane"
 import { createGround } from "./ground"
 
 const MAX_PIXEL_RATIO = 2
@@ -52,8 +51,13 @@ const main = () => {
       scene.add(explosion.streaks)
 
       explosion.timeline.seek(0)
-      // Setup pane config
-      explosionPane(sun, explosion)
+
+      if (process.env.NODE_ENV === "development") {
+        import("./explosion/tweakpane").then(({ explosionPane }) => {
+          // Setup pane config
+          explosionPane(sun, explosion)
+        })
+      }
 
       // Play button
       const playButton = document.getElementById("play-button")!
