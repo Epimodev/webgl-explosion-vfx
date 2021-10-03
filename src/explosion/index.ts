@@ -57,8 +57,10 @@ const createDustGroup = (
 
   for (let i = 0; i < nbParticules; i += 1) {
     const angle = angleStep * i
-    const x = Math.cos(angle)
-    const z = -Math.sin(angle)
+    const previousAngle = angle - angleStep
+    const randomAngle = lerp(previousAngle, angle, Math.random())
+    const x = Math.cos(randomAngle)
+    const z = -Math.sin(randomAngle)
     const mesh = new THREE.Mesh(geometry, material)
     mesh.position.set(x, 0, z)
     group.add(mesh)
