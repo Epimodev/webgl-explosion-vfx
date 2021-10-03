@@ -40,9 +40,6 @@ const main = () => {
       loader.setPercentage(progress)
     },
     assets => {
-      loader.hide()
-      // return
-
       // Ground
       const ground = createGround(assets)
       scene.add(ground)
@@ -81,9 +78,11 @@ const main = () => {
           explosion.fireSmoke.material.uniforms.u_time.value = elapsedTime / 10
         },
       })
+
+      loader.hide()
     },
     () => {
-      console.log("ERROR")
+      loader.displayError()
     },
   )
 }
@@ -110,15 +109,16 @@ const getLoaderControls = () => {
       const transitionDuration =
         parseFloat(overlayStyle.transitionDuration) * 1000
       const transitionDelay = parseFloat(overlayStyle.transitionDelay) * 1000
-      // add 500ms to be sure the transition is completed
-      const hideTimeout = transitionDuration + transitionDelay + 500
+      const hideTimeout = transitionDuration + transitionDelay
 
       setTimeout(() => {
         overlay.classList.add("overlay-hidden")
       }, hideTimeout)
     },
     displayError: () => {
-      console.log("DISPLAY ERROR")
+      const title = overlay.querySelector(".overlay-title") as HTMLDivElement
+      title.innerHTML =
+        "Failed to load assets, please retry by reloading the page."
     },
   }
 }
