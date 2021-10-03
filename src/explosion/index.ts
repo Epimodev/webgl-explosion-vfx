@@ -232,9 +232,9 @@ export const createExplosion = ({
           easing: Easing.easeOutQuad,
         },
         {
-          duration: 12000,
+          duration: 10000,
           value: 3.6,
-          easing: Easing.linear,
+          easing: Easing.easeInQuad,
         },
       ],
     },
@@ -245,9 +245,9 @@ export const createExplosion = ({
       keyframes: [
         {
           delay: 1000,
-          duration: 12000,
+          duration: 10000,
           value: 0.8,
-          easing: Easing.linear,
+          easing: Easing.easeInQuad,
         },
       ],
     },
@@ -336,6 +336,71 @@ export const createExplosion = ({
           duration: 400,
           value: 7,
           easing: Easing.easeOutQuad,
+        },
+      ],
+    },
+    {
+      target: dustMaterial.uniforms.u_dustScale,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 100,
+          duration: 100,
+          value: 1,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: dustMaterial.uniforms.u_dustRadius,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 100,
+          duration: 500,
+          value: 2.5,
+          easing: Easing.easeOutExpo,
+        },
+      ],
+    },
+    {
+      target: dustMaterial.uniforms.u_dustHeight,
+      key: "value",
+      initialValue: 0,
+      keyframes: [
+        {
+          delay: 600,
+          duration: 10000,
+          value: 2,
+          easing: Easing.easeInQuad,
+        },
+      ],
+    },
+    {
+      target: dustMaterial.uniforms.u_dustTransparency,
+      key: "value",
+      initialValue: 0.55,
+      keyframes: [
+        {
+          delay: 600,
+          duration: 6000,
+          value: 1,
+          easing: Easing.easeInQuad,
+        },
+      ],
+    },
+    {
+      target: dustMaterial.uniforms.u_dustTransparencySmoothness,
+      key: "value",
+      initialValue: 0.45,
+      keyframes: [
+        {
+          delay: 600,
+          duration: 6000,
+          value: 2,
+          easing: Easing.easeInQuad,
         },
       ],
     },
