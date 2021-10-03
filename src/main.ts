@@ -1,6 +1,7 @@
 import Stats from "stats.js"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader"
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass"
@@ -33,44 +34,127 @@ const main = () => {
   sun.position.z = 2
   scene.add(sun)
 
-  // Ground
-  const ground = createGround()
-  scene.add(ground)
-
-  // Create 1 explosion
-  const explosion = createExplosion()
-  scene.add(explosion.light)
-  scene.add(explosion.fireSmoke)
-  scene.add(explosion.sparkles)
-  scene.add(explosion.streaks)
-
-  explosion.timeline.seek(0)
-
-  // Setup pane config
-  explosionPane(sun, explosion)
-
-  // Play button
-  const playButton = document.getElementById("play-button")!
-  playButton.addEventListener("click", () => {
-    explosion.timeline.seek(0)
-    explosion.timeline.play()
-
-    playButton.setAttribute("disabled", "")
-    setTimeout(() => {
-      playButton.removeAttribute("disabled")
-    }, 3000)
-  })
-
-  const clock = new THREE.Clock()
-  clock.start()
-
-  createPlayground({
-    scene,
-    camera,
-    onTick: () => {
-      const elapsedTime = clock.getElapsedTime()
-      explosion.fireSmoke.material.uniforms.u_time.value = elapsedTime / 10
+  loadAssets(
+    progress => {
+      console.log("PROGRESS", progress)
     },
+    assets => {
+      // Ground
+      const ground = createGround(assets)
+      scene.add(ground)
+
+      // Create explosion
+      const explosion = createExplosion(assets)
+      scene.add(explosion.light)
+      scene.add(explosion.fireSmoke)
+      scene.add(explosion.sparkles)
+      scene.add(explosion.streaks)
+
+      explosion.timeline.seek(0)
+      // Setup pane config
+      explosionPane(sun, explosion)
+
+      // Play button
+      const playButton = document.getElementById("play-button")!
+      playButton.addEventListener("click", () => {
+        explosion.timeline.seek(0)
+        explosion.timeline.play()
+
+        playButton.setAttribute("disabled", "")
+        setTimeout(() => {
+          playButton.removeAttribute("disabled")
+        }, 3000)
+      })
+
+      const clock = new THREE.Clock()
+      clock.start()
+
+      createPlayground({
+        scene,
+        camera,
+        onTick: () => {
+          const elapsedTime = clock.getElapsedTime()
+          explosion.fireSmoke.material.uniforms.u_time.value = elapsedTime / 10
+        },
+      })
+    },
+    () => {
+      console.log("ERROR")
+    },
+  )
+}
+
+type SceneAssets = {
+  groundGeometry: THREE.BufferGeometry
+  streaksPlaneGeometry: THREE.BufferGeometry
+  textureGroundColor: THREE.Texture
+  textureGroundRoughness: THREE.Texture
+  textureGroundNormals: THREE.Texture
+}
+
+const loadAssets = (
+  onProgress: (progress: number) => void,
+  onSuccess: (assets: SceneAssets) => void,
+  onError: () => void,
+) => {
+  let failed = false
+
+  // Disable eslint to keep consistency between all assets we load
+  let groundGeometry: THREE.BufferGeometry
+  let streaksPlaneGeometry: THREE.BufferGeometry
+  let textureGroundColor: THREE.Texture // eslint-disable-line
+  let textureGroundRoughness: THREE.Texture // eslint-disable-line
+  let textureGroundNormals: THREE.Texture // eslint-disable-line
+
+  // Object file loaded in this project contains only 1 object and we only need the geometry
+  const extractFirstGeometry = (group: THREE.Group): THREE.BufferGeometry => {
+    const mesh = group.children[0] as THREE.Mesh
+    return mesh.geometry
+  }
+
+  const handleLoad = () => {
+    if (!failed) {
+      // We are sure assets are loaded and assigned here thanks to loading manager
+      onSuccess({
+        groundGeometry,
+        streaksPlaneGeometry,
+        textureGroundColor,
+        textureGroundRoughness,
+        textureGroundNormals,
+      })
+    }
+  }
+  const handleProgress = (_url: string, loaded: number, total: number) => {
+    if (!failed) {
+      onProgress(loaded / total)
+    }
+  }
+  const handleError = () => {
+    failed = true
+    onError()
+  }
+  const manager = new THREE.LoadingManager(
+    handleLoad,
+    handleProgress,
+    handleError,
+  )
+  const textureLoader = new THREE.TextureLoader(manager)
+  const objectLoader = new OBJLoader(manager)
+
+  textureGroundColor = textureLoader.load(
+    "/textures/ground-dirty-rocky/color.jpg",
+  )
+  textureGroundRoughness = textureLoader.load(
+    "/textures/ground-dirty-rocky/roughness.jpg",
+  )
+  textureGroundNormals = textureLoader.load(
+    "/textures/ground-dirty-rocky/normals.jpg",
+  )
+  objectLoader.load("/objects/ground.obj", group => {
+    groundGeometry = extractFirstGeometry(group)
+  })
+  objectLoader.load("/objects/streaks-plane.obj", group => {
+    streaksPlaneGeometry = extractFirstGeometry(group)
   })
 }
 
