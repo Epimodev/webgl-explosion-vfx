@@ -8,7 +8,6 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 import { createExplosion } from "./explosion"
 import { explosionPane } from "./explosion/tweakpane"
 import { createGround } from "./ground"
-import "./style.css"
 
 const MAX_PIXEL_RATIO = 2
 
@@ -34,11 +33,16 @@ const main = () => {
   sun.position.z = 2
   scene.add(sun)
 
+  const loader = getLoaderControls()
+
   loadAssets(
     progress => {
-      console.log("PROGRESS", progress)
+      loader.setPercentage(progress)
     },
     assets => {
+      loader.hide()
+      // return
+
       // Ground
       const ground = createGround(assets)
       scene.add(ground)
@@ -82,6 +86,41 @@ const main = () => {
       console.log("ERROR")
     },
   )
+}
+
+const getLoaderControls = () => {
+  const overlay = document.getElementById("loader-overlay") as HTMLDivElement
+  const percentage = overlay.querySelector(
+    ".loading-percentage",
+  ) as HTMLSpanElement
+  const progressBar = overlay.querySelector(
+    ".progress-bar-loaded",
+  ) as HTMLDivElement
+
+  return {
+    setPercentage: (value: number) => {
+      const percentageLoaded = value * 100
+      percentage.innerHTML = percentageLoaded.toString()
+      progressBar.style.transform = `scaleX(${value})`
+    },
+    hide: () => {
+      overlay.classList.add("overlay-fadeout")
+
+      const overlayStyle = getComputedStyle(overlay)
+      const transitionDuration =
+        parseFloat(overlayStyle.transitionDuration) * 1000
+      const transitionDelay = parseFloat(overlayStyle.transitionDelay) * 1000
+      // add 500ms to be sure the transition is completed
+      const hideTimeout = transitionDuration + transitionDelay + 500
+
+      setTimeout(() => {
+        overlay.classList.add("overlay-hidden")
+      }, hideTimeout)
+    },
+    displayError: () => {
+      console.log("DISPLAY ERROR")
+    },
+  }
 }
 
 type SceneAssets = {

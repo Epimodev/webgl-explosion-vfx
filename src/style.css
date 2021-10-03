@@ -1,4 +1,5 @@
 body {
+  font-family: 'Roboto Mono', 'Source Code Pro', 'Menlo', Courier, monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
@@ -6,6 +7,52 @@ body {
   --btn-background: #0c0926;
   --btn-hover-background: #000000;
   --btn-color: #59eaf0;
+}
+
+.overlay {
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--btn-background);
+  color: white;
+  opacity: 1;
+}
+.overlay-fadeout {
+  transition-delay: 1000ms;
+  transition-duration: 500ms;
+  opacity: 0;
+}
+.overlay-hidden {
+  display: none;
+}
+
+.overlay-title {
+  margin-bottom: 16px;
+}
+
+.progress-bar {
+  position: relative;
+  width: 320px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.progress-bar-loaded {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--btn-color);
+  transform-origin: 0 0;
+  transform: scaleX(0);
+  transition: 200ms;
 }
 
 .button {
@@ -23,7 +70,6 @@ body {
   background: none;
   background-color: var(--btn-background);
   color: var(--btn-color);
-  font-family: 'Roboto Mono', 'Source Code Pro', 'Menlo', Courier, monospace;
   font-size: 16px;
   font-weight: 600;
   text-transform: uppercase;
