@@ -82,7 +82,7 @@ export const createExplosion = ({
       u_sparkleHeight: { value: 0 },
       u_sparkleScale: { value: 0.5 },
       u_sparkleRadius: { value: 1 },
-      u_sparkleIntensity: { value: 1 },
+      u_sparkleIntensity: { value: 5 },
       u_c1: { value: new THREE.Color(0xff8800) },
       u_c2: { value: new THREE.Color(0xffff88) },
     },
@@ -239,7 +239,7 @@ export const createExplosion = ({
       keyframes: [
         {
           duration: 50,
-          value: 1,
+          value: 0.4,
           easing: Easing.linear,
         },
         {
@@ -258,7 +258,7 @@ export const createExplosion = ({
         {
           delay: 0,
           duration: 500,
-          value: 1.8,
+          value: 2,
           easing: Easing.easeOutQuad,
         },
         {
@@ -271,12 +271,12 @@ export const createExplosion = ({
     {
       target: sparklesMaterial.uniforms.u_sparkleRadius,
       key: "value",
-      initialValue: 0.5,
+      initialValue: 0,
       keyframes: [
         {
           delay: 0,
           duration: 1500,
-          value: 2,
+          value: 3.5,
           easing: Easing.easeOutExpo,
         },
       ],

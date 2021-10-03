@@ -106,7 +106,7 @@ export void sparklesFragment() {
   vec2 uv = gl_PointCoord;
   float circle = linearCircle(uv);
   float haloCircle = u_sparkleIntensity * clamp(invLerp(0.5, 10.0, circle), 0.0, 1.0);
-  float lightCircle = smoothstep(0.92, 0.97, circle);
+  float lightCircle = smoothstep(0.8, 0.9, circle);
 
   float alpha = lightCircle + haloCircle;
   vec3 color = mix(u_c1, u_c2, smoothstep(0.8, 1.0, circle));

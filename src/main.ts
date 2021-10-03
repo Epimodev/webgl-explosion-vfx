@@ -100,6 +100,21 @@ const getLoaderControls = () => {
     ".progress-bar-loaded",
   ) as HTMLDivElement
 
+  if (process.env.NODE_ENV === "development") {
+    overlay.classList.add("overlay-hidden")
+    return {
+      setPercentage: (_value: number) => {
+        return
+      },
+      hide: () => {
+        return
+      },
+      displayError: () => {
+        return
+      },
+    }
+  }
+
   return {
     setPercentage: (value: number) => {
       const percentageLoaded = value * 100
@@ -243,7 +258,7 @@ const createPlayground = ({
   const renderPass = new RenderPass(scene, camera)
   const bloomRadius = 0
   const bloomThreshold = 0.65
-  const bloomStrength = 0.5
+  const bloomStrength = 0.8
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     bloomStrength,
