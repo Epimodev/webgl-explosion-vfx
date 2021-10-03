@@ -138,15 +138,21 @@ export const createExplosion = ({
     vertexShader: dustVertex,
     fragmentShader: dustFragment,
     uniforms: {
+      u_time: fireSmokeMaterial.uniforms.u_time,
       u_dustRadius: { value: 1 },
       u_dustHeight: { value: 0 },
-      u_dustScale: { value: 1 },
-      u_c1: { value: new THREE.Color(0xff2900) },
-      u_c2: { value: new THREE.Color(0xff8800) },
+      u_dustScale: { value: 0.5 },
+      u_dustNoiseScale: { value: 4 },
+      u_dustNoiseSpeed: { value: 2 },
+      u_dustCircleLimit: { value: 0.6 },
+      u_dustCircleSmoothness: { value: 0.3 },
+      u_dustTransparency: { value: 0.55 },
+      u_dustTransparencySmoothness: { value: 0.45 },
+      u_c1: { value: new THREE.Color(0x000000) },
+      u_c2: { value: new THREE.Color(0x995100) },
     },
-    wireframe: true,
   })
-  const nbDustParticules = 3
+  const nbDustParticules = 10
 
   const light = new THREE.PointLight(0xffffff)
   light.position.set(0, 0.2, 0)

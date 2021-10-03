@@ -45,6 +45,12 @@ uniform float u_streaksAlpha;
 uniform float u_dustRadius;
 uniform float u_dustHeight;
 uniform float u_dustScale;
+uniform float u_dustNoiseScale;
+uniform float u_dustNoiseSpeed;
+uniform float u_dustCircleLimit;
+uniform float u_dustCircleSmoothness;
+uniform float u_dustTransparency;
+uniform float u_dustTransparencySmoothness;
 
 varying vec2 v_uv;
 varying vec3 v_position;
@@ -143,7 +149,8 @@ export void streaksFragment() {
   sideGradient = clamp(sideGradient, 0.0, 1.0);
 
   vec3 noiseUv = vec3(v_uv.x * u_streaksNoiseX, v_uv.y * u_streaksNoiseY - u_streaksNoiseOffset, 0.0);
-  float noise = snoise(noiseUv) * snoise(noiseUv) * snoise(noiseUv);
+  float noise = snoise(noiseUv);
+  noise = pow(noise, 3.0);
   noise = invLerp(0.0, 0.001, noise);
   noise -= 10.0;
   noise = max(0.0, noise);
@@ -171,8 +178,14 @@ export void dustVertex() {
 }
 
 export void dustFragment() {
-  vec3 color = vec3(0.0);
-  float alpha = 1.0;
+  float noiseFac = snoiseFractal(vec3(v_uv * u_dustNoiseScale, u_time * u_dustNoiseSpeed) + v_direction);
+  noiseFac = invLerp(-1.5, 0.4, noiseFac);
+  float circle = quadraticCircle(v_uv);
+  circle = invLerp(u_dustCircleLimit, u_dustCircleLimit + u_dustCircleSmoothness, circle);
+  float shape = circle * noiseFac;
+  float alpha = invLerp(u_dustTransparency, u_dustTransparency + u_dustTransparencySmoothness, shape);
+
+  vec3 color = mix(u_c1, u_c2, smoothstep(0.8, 2.3, shape));
 
   gl_FragColor = vec4(color, alpha);
 }

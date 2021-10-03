@@ -353,6 +353,50 @@ export const explosionPane = (
     max: 1,
     step: 0.01,
   })
+  tabs.pages[4].addInput(dustMaterial.uniforms.u_dustNoiseScale, "value", {
+    label: "noise scale",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  tabs.pages[4].addInput(dustMaterial.uniforms.u_dustNoiseSpeed, "value", {
+    label: "noise speed",
+    min: 0,
+    max: 10,
+    step: 0.01,
+  })
+  tabs.pages[4].addInput(dustMaterial.uniforms.u_dustCircleLimit, "value", {
+    label: "circle limit",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  })
+  tabs.pages[4].addInput(
+    dustMaterial.uniforms.u_dustCircleSmoothness,
+    "value",
+    {
+      label: "circle smoothness",
+      min: 0,
+      max: 1,
+      step: 0.01,
+    },
+  )
+  tabs.pages[4].addInput(dustMaterial.uniforms.u_dustTransparency, "value", {
+    label: "transparency",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  })
+  tabs.pages[4].addInput(
+    dustMaterial.uniforms.u_dustTransparencySmoothness,
+    "value",
+    {
+      label: "transparency smoothness",
+      min: 0,
+      max: 2,
+      step: 0.01,
+    },
+  )
   // colors
   const dustColors = {
     c1: `#${dustMaterial.uniforms.u_c1.value.getHexString()}`,
