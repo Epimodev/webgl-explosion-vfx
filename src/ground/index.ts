@@ -36,7 +36,7 @@ export const createGround = ({
   })
 
   const ground = new THREE.Mesh(groundGeometry, groundMaterial)
-  ground.position.y = -0.4
+  ground.position.y = -0.2
 
   return ground
 }
