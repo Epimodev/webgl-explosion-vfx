@@ -51,7 +51,7 @@ const main = () => {
       scene.add(explosion.streaks)
       scene.add(explosion.dust)
 
-      explosion.timeline.seek(150)
+      explosion.timeline.seek(0)
 
       // Add tweakpane only during development
       if (process.env.NODE_ENV === "development") {

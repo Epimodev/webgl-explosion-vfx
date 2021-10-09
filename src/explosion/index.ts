@@ -337,7 +337,7 @@ export const createExplosion = ({
         {
           delay: 50,
           duration: 400,
-          value: 7,
+          value: 7.5,
           easing: Easing.easeOutQuad,
         },
       ],
