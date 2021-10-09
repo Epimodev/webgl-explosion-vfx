@@ -6,6 +6,7 @@ import Inspect from "vite-plugin-inspect"
 
 export default defineConfig({
   root: "./src",
+  build: { outDir: "../dist" },
   plugins: [glslxPlugin({ writeTypeDeclarations: true }), Inspect()],
 })
 
