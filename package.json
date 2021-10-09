@@ -1,7 +1,7 @@
 {
-  "name": "explosion-scene",
+  "name": "webgl-explosion-vfx",
   "version": "0.0.1",
-  "description": "Explosion scene with threejs",
+  "description": "Explosion VFX with threejs",
   "author": "Frederic Godin",
   "license": "MIT",
   "private": true,
