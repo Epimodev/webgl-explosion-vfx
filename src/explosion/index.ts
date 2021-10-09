@@ -286,6 +286,7 @@ export const createExplosion = ({
       ],
     },
     {
+      // set scale to 0 before and after animation to avoid running fragment shader while the plane is completely transparent
       target: streaks.scale,
       key: "y",
       initialValue: 0,
@@ -354,6 +355,7 @@ export const createExplosion = ({
           easing: Easing.easeOutExpo,
         },
         {
+          // set radius back to 0 once the mesh is completely transparent to avoid running fragment shader for nothing
           delay: 100,
           duration: 10,
           value: 0,
