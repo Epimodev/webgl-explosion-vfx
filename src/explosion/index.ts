@@ -111,16 +111,26 @@ export const createExplosion = ({
     },
   })
 
-  const dustGeometry = new THREE.TorusGeometry(0.3, 0.2, 16, 64)
+  const cylinderRadius = 1
+  const cylinderHeight = 0.5
+  const cylinderSegments = 32
+  const dustGeometry = new THREE.CylinderGeometry(
+    cylinderRadius,
+    cylinderRadius,
+    cylinderHeight,
+    cylinderSegments,
+    1,
+    true,
+  )
   const dustMaterial = new THREE.RawShaderMaterial({
     transparent: true,
     depthWrite: false,
     vertexShader: dustVertex,
     fragmentShader: dustFragment,
+    side: THREE.DoubleSide,
     uniforms: {
       u_time: fireSmokeMaterial.uniforms.u_time,
       u_dustRadius: { value: 1 },
-      u_dustHeight: { value: 0 },
       u_dustNoiseScale: { value: 2 },
       u_dustNoiseSpeed: { value: 2 },
       u_dustTransparency: { value: 0.55 },
@@ -136,7 +146,6 @@ export const createExplosion = ({
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
   const streaks = new THREE.Mesh(streaksPlaneGeometry, streaksMaterial)
   const dust = new THREE.Mesh(dustGeometry, dustMaterial)
-  dust.rotation.set(Math.PI / 2, 0, 0)
 
   fireSmoke.renderOrder = 2
   sparkles.renderOrder = 3
@@ -277,6 +286,24 @@ export const createExplosion = ({
       ],
     },
     {
+      target: streaks.scale,
+      key: "y",
+      initialValue: 0,
+      keyframes: [
+        {
+          duration: 10,
+          value: 1,
+          easing: Easing.linear,
+        },
+        {
+          delay: 300,
+          duration: 10,
+          value: 0,
+          easing: Easing.linear,
+        },
+      ],
+    },
+    {
       target: streaksMaterial.uniforms.u_streaksRadius,
       key: "value",
       initialValue: 0,
@@ -326,24 +353,30 @@ export const createExplosion = ({
           value: 4,
           easing: Easing.easeOutExpo,
         },
+        {
+          delay: 100,
+          duration: 10,
+          value: 0,
+          easing: Easing.linear,
+        },
       ],
     },
     {
       target: dustMaterial.uniforms.u_dustTransparency,
       key: "value",
-      initialValue: 1.0,
+      initialValue: 1,
       keyframes: [
         {
           delay: 50,
           duration: 50,
-          value: 0.2,
+          value: 0,
           easing: Easing.linear,
         },
         {
           delay: 50,
-          duration: 500,
+          duration: 700,
           value: 1.0,
-          easing: Easing.easeOutExpo,
+          easing: Easing.easeOutQuad,
         },
       ],
     },

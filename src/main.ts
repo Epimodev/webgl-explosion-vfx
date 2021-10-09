@@ -51,7 +51,7 @@ const main = () => {
       scene.add(explosion.streaks)
       scene.add(explosion.dust)
 
-      explosion.timeline.seek(0)
+      explosion.timeline.seek(150)
 
       // Add tweakpane only during development
       if (process.env.NODE_ENV === "development") {
@@ -280,8 +280,8 @@ const createPlayground = ({
   controls.enableZoom = false
   controls.minPolarAngle = 0
   controls.maxPolarAngle = Math.PI / 2
-  // controls.autoRotate = true
-  // controls.autoRotateSpeed = 1
+  controls.autoRotate = true
+  controls.autoRotateSpeed = 1
 
   const updateSize = () => {
     // Update size

@@ -338,12 +338,6 @@ export const explosionPane = (
     max: 10,
     step: 0.01,
   })
-  tabs.pages[4].addInput(dustMaterial.uniforms.u_dustHeight, "value", {
-    label: "height",
-    min: 0,
-    max: 2,
-    step: 0.01,
-  })
   tabs.pages[4].addInput(dustMaterial.uniforms.u_dustNoiseScale, "value", {
     label: "noise scale",
     min: 0,
