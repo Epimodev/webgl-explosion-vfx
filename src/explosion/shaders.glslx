@@ -44,17 +44,13 @@ uniform float u_streaksAlpha;
 // dust uniforms
 uniform float u_dustRadius;
 uniform float u_dustHeight;
-uniform float u_dustScale;
 uniform float u_dustNoiseScale;
 uniform float u_dustNoiseSpeed;
-uniform float u_dustCircleLimit;
-uniform float u_dustCircleSmoothness;
 uniform float u_dustTransparency;
 uniform float u_dustTransparencySmoothness;
 
 varying vec2 v_uv;
 varying vec3 v_position;
-varying vec3 v_direction;
 
 #include "../shaders/utils/interpolation.glslx"
 #include "../shaders/utils/model.glslx"
@@ -165,27 +161,23 @@ export void streaksFragment() {
 }
 
 export void dustVertex() {
-  // set during group creation in createDustGroup
-  vec3 direction = getPosition(modelMatrix);
-  vec3 translation = direction * u_dustRadius + vec3(0.0, u_dustHeight, 0.0);
-  mat4 rotation = lookAt(translation, cameraPosition);
-  mat4 transformMatrix = transform(u_dustScale, translation);
-
-  gl_Position = projectionMatrix * viewMatrix * transformMatrix * rotation * vec4(position, 1.0);
+  vec3 direction = vec3(normalize(position.xy), 0);
+  vec3 offset = direction * u_dustRadius;
+  vec3 pos = position + offset;
+  pos.z -= u_dustHeight;
+  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
 
   v_uv = uv;
-  v_direction = direction;
 }
 
 export void dustFragment() {
-  float noiseFac = snoiseFractal(vec3(v_uv * u_dustNoiseScale, u_time * u_dustNoiseSpeed) + v_direction);
+  vec2 uv = abs(v_uv - 0.5) * 2.0;
+  vec2 noiseScale = vec2(20, 1);
+  float noiseFac = snoiseFractal(vec3(uv * u_dustNoiseScale * noiseScale, u_time * u_dustNoiseSpeed));
   noiseFac = invLerp(-1.5, 0.4, noiseFac);
-  float circle = quadraticCircle(v_uv);
-  circle = invLerp(u_dustCircleLimit, u_dustCircleLimit + u_dustCircleSmoothness, circle);
-  float shape = circle * noiseFac;
-  float alpha = invLerp(u_dustTransparency, u_dustTransparency + u_dustTransparencySmoothness, shape);
 
-  vec3 color = mix(u_c1, u_c2, smoothstep(0.8, 2.3, shape));
+  vec3 color = u_c1;
+  float alpha = invLerp(u_dustTransparency, u_dustTransparency + u_dustTransparencySmoothness, noiseFac);
 
   gl_FragColor = vec4(color, alpha);
 }

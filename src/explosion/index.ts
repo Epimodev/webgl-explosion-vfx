@@ -22,7 +22,7 @@ export type Explosion = {
   fireSmoke: THREE.Mesh<THREE.BufferGeometry, THREE.RawShaderMaterial>
   sparkles: THREE.Points<THREE.BufferGeometry, THREE.RawShaderMaterial>
   streaks: THREE.Mesh<THREE.BufferGeometry, THREE.RawShaderMaterial>
-  dust: THREE.Group
+  dust: THREE.Mesh<THREE.BufferGeometry, THREE.RawShaderMaterial>
   timeline: Timeline
 }
 
@@ -45,28 +45,6 @@ class RandomSparkles extends THREE.BufferGeometry {
       new THREE.Float32BufferAttribute(positions, 3),
     )
   }
-}
-
-const createDustGroup = (
-  geometry: THREE.BufferGeometry,
-  material: THREE.RawShaderMaterial,
-  nbParticules: number,
-): THREE.Group => {
-  const group = new THREE.Group()
-  const angleStep = (2 * Math.PI) / nbParticules
-
-  for (let i = 0; i < nbParticules; i += 1) {
-    const angle = angleStep * i
-    const previousAngle = angle - angleStep
-    const randomAngle = lerp(previousAngle, angle, Math.random())
-    const x = Math.cos(randomAngle)
-    const z = -Math.sin(randomAngle)
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.set(x, 0, z)
-    group.add(mesh)
-  }
-
-  return group
 }
 
 export const createExplosion = ({
@@ -133,7 +111,7 @@ export const createExplosion = ({
     },
   })
 
-  const dustGeometry = new THREE.PlaneGeometry(1, 1)
+  const dustGeometry = new THREE.TorusGeometry(0.3, 0.2, 16, 64)
   const dustMaterial = new THREE.RawShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -143,18 +121,13 @@ export const createExplosion = ({
       u_time: fireSmokeMaterial.uniforms.u_time,
       u_dustRadius: { value: 1 },
       u_dustHeight: { value: 0 },
-      u_dustScale: { value: 0.5 },
-      u_dustNoiseScale: { value: 4 },
+      u_dustNoiseScale: { value: 2 },
       u_dustNoiseSpeed: { value: 2 },
-      u_dustCircleLimit: { value: 0.6 },
-      u_dustCircleSmoothness: { value: 0.3 },
       u_dustTransparency: { value: 0.55 },
-      u_dustTransparencySmoothness: { value: 0.45 },
-      u_c1: { value: new THREE.Color(0x000000) },
-      u_c2: { value: new THREE.Color(0x995100) },
+      u_dustTransparencySmoothness: { value: 0.85 },
+      u_c1: { value: new THREE.Color(0x261500) },
     },
   })
-  const nbDustParticules = 10
 
   const light = new THREE.PointLight(0xffffff)
   light.position.set(0, 0.2, 0)
@@ -162,7 +135,8 @@ export const createExplosion = ({
   const fireSmoke = new THREE.Mesh(fireSmokeGeometry, fireSmokeMaterial)
   const sparkles = new THREE.Points(sparklesGeometry, sparklesMaterial)
   const streaks = new THREE.Mesh(streaksPlaneGeometry, streaksMaterial)
-  const dust = createDustGroup(dustGeometry, dustMaterial, nbDustParticules)
+  const dust = new THREE.Mesh(dustGeometry, dustMaterial)
+  dust.rotation.set(Math.PI / 2, 0, 0)
 
   fireSmoke.renderOrder = 2
   sparkles.renderOrder = 3
@@ -342,19 +316,6 @@ export const createExplosion = ({
       ],
     },
     {
-      target: dustMaterial.uniforms.u_dustScale,
-      key: "value",
-      initialValue: 0,
-      keyframes: [
-        {
-          delay: 100,
-          duration: 100,
-          value: 1,
-          easing: Easing.easeOutExpo,
-        },
-      ],
-    },
-    {
       target: dustMaterial.uniforms.u_dustRadius,
       key: "value",
       initialValue: 0,
@@ -362,47 +323,27 @@ export const createExplosion = ({
         {
           delay: 100,
           duration: 500,
-          value: 2.5,
+          value: 4,
           easing: Easing.easeOutExpo,
-        },
-      ],
-    },
-    {
-      target: dustMaterial.uniforms.u_dustHeight,
-      key: "value",
-      initialValue: 0,
-      keyframes: [
-        {
-          delay: 600,
-          duration: 10000,
-          value: 2,
-          easing: Easing.easeInQuad,
         },
       ],
     },
     {
       target: dustMaterial.uniforms.u_dustTransparency,
       key: "value",
-      initialValue: 0.55,
+      initialValue: 1.0,
       keyframes: [
         {
-          delay: 600,
-          duration: 6000,
-          value: 1,
-          easing: Easing.easeInQuad,
+          delay: 50,
+          duration: 50,
+          value: 0.2,
+          easing: Easing.linear,
         },
-      ],
-    },
-    {
-      target: dustMaterial.uniforms.u_dustTransparencySmoothness,
-      key: "value",
-      initialValue: 0.45,
-      keyframes: [
         {
-          delay: 600,
-          duration: 6000,
-          value: 2,
-          easing: Easing.easeInQuad,
+          delay: 50,
+          duration: 500,
+          value: 1.0,
+          easing: Easing.easeOutExpo,
         },
       ],
     },
